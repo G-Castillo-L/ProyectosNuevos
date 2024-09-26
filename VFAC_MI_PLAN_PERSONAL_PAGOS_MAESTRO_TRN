@@ -1,0 +1,130 @@
+
+--VDIM_NIVEL_MOROSIDAD CHECAR EN QUE AMBIENTE VIVE
+--CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_MIGRACION_SOBREGIROS_INSUMO_EDAD_DILISA_TRN AS (
+
+
+
+
+
+--VFAC_MI_PLAN_PERSONAL_PAGOS_MAESTRO_TRN
+
+CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_MI_PLAN_PERSONAL_PAGOS_MAESTRO_TRN AS (
+
+
+SELECT DISTINCT 
+      A.TIP_INF
+                ,A.ANIO_OBS
+                ,LPAD(CAST(A.MES_OBS AS STRING),2,'0') AS MES_OBS
+                ,A.ANIOMES_OBS
+                ,A.ANIO_ESTR
+                ,LPAD(CAST(A.MES_ESTR AS STRING),2,'0') AS MES_ESTR
+                -- ,CASE WHEN ANTIG_ESTR IN (0,3,6,9,12,18) THEN ANTIG_ESTR ELSE 99 END AS ANTIG_ESTR
+                ,A.ANTIG_ESTR
+                ,A.ANIOMES_ESTR
+                ,A.PLAZO_FIN_ESTR 
+                ,A.RANG_MOBS
+                ,A.FLG_30
+                ,A.FLG_90
+                ,A.RANG_NIV_MOR
+                ,A.RANG_NIV_MOR_ANT
+                ,A.RANG_EDAD
+                ,A.RANG_LIM_CRD
+                ,CASE													
+                      WHEN  A.MOBS_ALT_ESTR BETWEEN 0   and 6  THEN  '0.0-6 MoB'													
+                      WHEN  A.MOBS_ALT_ESTR BETWEEN 7   and 12 THEN  '1.7-12 MoB'												
+                      WHEN  A.MOBS_ALT_ESTR BETWEEN 13  and 24 THEN  '2.13-24 MoB'												
+                      WHEN  A.MOBS_ALT_ESTR BETWEEN 25  and 36 THEN  '3.25-36 MoB'												
+                      WHEN  A.MOBS_ALT_ESTR BETWEEN 37  and 48 THEN  '4.37-48 MoB'												
+                      WHEN  A.MOBS_ALT_ESTR BETWEEN 49  and 60 THEN  '5.49-60 MoB'												
+                      WHEN  A.MOBS_ALT_ESTR              >= 61 THEN  '6.>=61 MoB'												
+                  ELSE '7.NEG MoB'												
+                  END  AS RANG_MOB_PLAN
+                ,CASE WHEN A.NIV_RIESGO_ESTR ='RIESGO BAJO' THEN A.NIV_RIESGO_ESTR ELSE 'RIESGO ALTO'	END AS RIESGO  --18
+                ,A.PLAN
+                ,A.YTD_ESTR
+                ,SEGMENTO_CLIENTE
+                ,A.YTD_CAST
+                ,A.TDA_ZNA
+                ,A.FLG_DIG
+                ,CASE WHEN A.ANIOMES_ESTR= (extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -4 MONTH )))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -4 MONTH )) THEN 1 
+                ELSE 0 END AS BANDERA_MOB3
+                ,CASE WHEN A.ANIOMES_ESTR= (extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -7 MONTH )))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -7 MONTH )) THEN 1 
+                ELSE 0 END AS BANDERA_MOB6
+                ,CASE WHEN A.ANIOMES_ESTR= (extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -10 MONTH )))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -10 MONTH )) THEN 1 
+                ELSE 0 END AS BANDERA_MOB9
+                ,CASE WHEN A.ANIOMES_ESTR= (extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -13 MONTH )))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -13 MONTH )) THEN 1 
+                ELSE 0 END AS BANDERA_Y1
+                ,CASE WHEN A.ANIOMES_ESTR= (extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -25 MONTH )))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -25 MONTH )) THEN 1 
+                ELSE 0 END AS BANDERA_Y2
+                                ,CASE WHEN ANIOMES_ESTR<= (extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -13 MONTH )))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -13 MONTH )) THEN 1 
+                ELSE 0 END AS RANG_Y1
+                ,CASE WHEN A.ANIOMES_ESTR<= (extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -25 MONTH )))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -25 MONTH )) THEN 1 
+                ELSE 0 END AS RANG_Y2
+                ,CASE WHEN C.RFM_CREDITO IS NULL THEN "9.Sin clasificar"
+ELSE C.RFM_CREDITO END AS RFM_CREDITO
+
+                ,CASE WHEN A.CTA_EDO_CVE not in ('T','9','8','P','Z','Q') THEN 1 ELSE 0 END AS FLG_ACT --ACTIVA
+                ,CASE WHEN  A.ANTIG_ESTR=0 THEN 1 ELSE 0 END AS  FLG_INSCRITA --22
+                ,CAST(SUM(A.CTA_SDO_ACT)/1000000 as FLOAT64) AS CTAS --CTA_SDO_ACT
+                ,CAST(SUM(A.PLAN_SDO_ACT)/1000000 AS FLOAT64) AS SDO_PLAN--PLAN_SDO_ACT
+                ,CAST(SUM(A.IMP_CAST)/1000000 AS FLOAT64) AS  IMP_CAST
+                ,CAST(COUNT(A.CTA_TRACK)/1000 AS FLOAT64) AS CUENTAS
+                ,CAST(SUM(CASE WHEN A.IMP_CAST >0 THEN 1 ELSE 0 END )/1000  AS FLOAT64) AS CUENTAS_CAST
+                ,CAST(SUM (A.CANT_CAST )/1000  AS FLOAT64) AS CANT_CAST
+                ,CAST(SUM(B.CTA_SDO_ACT)/1000000 as FLOAT64) AS SDO_CTA_1 --CTA_SDO_ACT
+                ,CAST(SUM(B.PLAN_SDO_ACT)/1000000 AS FLOAT64) AS SDO_PLAN_1--PLAN_SDO_ACT                
+                ,CAST(COUNT(B.CTA_TRACK)/1000 AS FLOAT64) AS CUENTAS_1
+FROM `crp-pro-dwh-semanticagold.EIL_DP_VMASTER.VFAC_NEGFIN_MI_PLAN_LT`  A
+--`crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MI_PLAN_LT` 
+--crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MI_PLAN_LT A
+LEFT JOIN (select 
+                CTA_CVE,  RANG_NIV_MOR,
+                CASE WHEN  RANG_NIV_MOR = "0.-CTAS_VIG" THEN "1.-1-29 DIAS"
+                WHEN  RANG_NIV_MOR = "1.-1-29 DIAS" THEN "2.-30_DIAS"
+                WHEN  RANG_NIV_MOR = "2.-30_DIAS" THEN "3.-60_DIAS"
+                WHEN  RANG_NIV_MOR = "3.-60_DIAS" THEN "4.-90_DIAS"
+                WHEN  RANG_NIV_MOR = "4.-90_DIAS"THEN "5.-120_DIAS" 
+                WHEN  RANG_NIV_MOR = "5.-120_DIAS" THEN "6.-150_DIAS"
+                WHEN  RANG_NIV_MOR = "6.-150_DIAS" THEN "7.-180_DIAS"
+                WHEN  RANG_NIV_MOR = "7.-180_DIAS"  THEN "8.-210_DIAS" 
+                ELSE "" END AS RANG_NIV_MOR_1,
+                CASE WHEN ANIO_OBS=12 THEN ANIOMES_OBS-89
+                ELSE ANIOMES_OBS-1
+                END AS ANIOMES_OBS1
+                ,CTA_SDO_ACT
+                ,PLAN_SDO_ACT               
+                ,CTA_TRACK
+                
+                
+FROM `crp-pro-dwh-semanticagold.EIL_DP_VMASTER.VFAC_NEGFIN_MI_PLAN_LT`  
+--`crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MI_PLAN_LT`
+--crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MI_PLAN_LT
+WHERE 
+  PLAN_SDO_ACT IS NOT NULL AND PLAN_SDO_ACT<>0
+    and CTA_EDO_CVE not in ('T')
+    and ANIOMES_OBS BETWEEN 
+202012
+AND  extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -1 MONTH ))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -15 DAY ))
+) as B
+ON (A.CTA_CVE=B.CTA_CVE AND A.ANIOMES_OBS=B.ANIOMES_OBS1 AND A.RANG_NIV_MOR=B.RANG_NIV_MOR_1 )
+
+LEFT JOIN crp-pro-cx-semantica.mus_pro_shared_views.VDIM_SGMTOS_RFM_HIST_AANF AS c ON (A.CTA_CVE= C.CTA_CVE AND A.ANIO_ESTR=C.ANIO AND A.MES_ESTR=C.MES)
+
+WHERE 
+  A.PLAN_SDO_ACT IS NOT NULL AND A.PLAN_SDO_ACT<>0
+  -- AND CTA_SDO_ACT IS NOT NULL AND CTA_SDO_ACT<>0
+    and A.CTA_EDO_CVE not in ('T')
+    and A.ANIOMES_OBS BETWEEN 
+(extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -15 DAY )) -3)*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -15 DAY ))
+AND  extract(year from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -15 DAY ))*100+extract(month from DATE_ADD(CURRENT_DATE('America/Mexico_City'),INTERVAL -15 DAY ))
+
+
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33
+);
+
+
+
+
+
+--VFAC_INT_INVERSO CHECAR DONDE ESTA 
+
