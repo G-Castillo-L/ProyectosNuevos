@@ -3,7 +3,7 @@
 --CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_MIGRACION_SOBREGIROS_INSUMO_EDAD_DILISA_TRN AS (
 
 
-
+-- esto es un comentario 
 
 
 --VFAC_MI_PLAN_PERSONAL_PAGOS_MAESTRO_TRN
