@@ -1,3 +1,7 @@
+CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
+AS 
+
+
 SELECT DISTINCT 
     A.TIP_INF,
     A.ANIO_OBS,
