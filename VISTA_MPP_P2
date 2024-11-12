@@ -1,5 +1,5 @@
--- CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
--- AS 
+CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
+AS 
 
 
 SELECT DISTINCT 
@@ -22,7 +22,11 @@ SELECT DISTINCT
           WHEN A.RANG_MOBS="C.13M-24M" THEN 3
           WHEN A.RANG_MOBS="D.25M-36M" THEN 4
           WHEN A.RANG_MOBS="E.37M-48M" THEN 5
-          ELSE 6 END ID_RANG_MOBS,
+          WHEN A.RANG_MOBS = "F.49M-48M" THEN 6
+          WHEN A.RANG_MOBS = "G.37M-48M" THEN 7
+  --       WHEN A.MOBS_ALT_ESTR >= 61 THEN 7
+  --       ELSE 8
+          ELSE 8 END ID_RANG_MOBS,
     A.FLG_30,
     A.FLG_90,
     -- A.RANG_NIV_MOR,
@@ -45,16 +49,16 @@ SELECT DISTINCT
     --     ELSE '7.NEG MoB'
     -- END AS RANG_MOB_PLAN,
 
-   CASE 
-        WHEN A.MOBS_ALT_ESTR BETWEEN 0 AND 6 THEN 1
-        WHEN A.MOBS_ALT_ESTR BETWEEN 7 AND 12 THEN 2
-        WHEN A.MOBS_ALT_ESTR BETWEEN 13 AND 24 THEN 3
-        WHEN A.MOBS_ALT_ESTR BETWEEN 25 AND 36 THEN 4
-        WHEN A.MOBS_ALT_ESTR BETWEEN 37 AND 48 THEN 5
-        WHEN A.MOBS_ALT_ESTR BETWEEN 49 AND 60 THEN 6
-        WHEN A.MOBS_ALT_ESTR >= 61 THEN 7
-        ELSE 8
-    END AS ID_RANG_MOB_PLAN,
+  --  CASE 
+  --       WHEN A.MOBS_ALT_ESTR BETWEEN 0 AND 6 THEN 1
+  --       WHEN A.MOBS_ALT_ESTR BETWEEN 7 AND 12 THEN 2
+  --       WHEN A.MOBS_ALT_ESTR BETWEEN 13 AND 24 THEN 3
+  --       WHEN A.MOBS_ALT_ESTR BETWEEN 25 AND 36 THEN 4
+  --       WHEN A.MOBS_ALT_ESTR BETWEEN 37 AND 48 THEN 5
+  --       WHEN A.MOBS_ALT_ESTR BETWEEN 49 AND 60 THEN 6
+  --       WHEN A.MOBS_ALT_ESTR >= 61 THEN 7
+  --       ELSE 8
+  --   END AS ID_RANG_MOB_PLAN,
     A.PLAN,
     -- A.YTD_ESTR,
     --A.SEGMENTO_CLIENTE,
@@ -88,6 +92,17 @@ SELECT DISTINCT
         WHEN A.ANTIG_ESTR = 0 THEN 1 
         ELSE 0 
     END AS FLG_INSCRITA,
+
+    CASE WHEN RANG_NIV_MOR ="0.-CTAS_VIG" THEN "0-89 Días"
+            WHEN RANG_NIV_MOR ="1.-1-29 DIAS" THEN "0-89 Días"
+            WHEN RANG_NIV_MOR ="2.-30_DIAS" THEN "0-89 Días"
+            WHEN RANG_NIV_MOR ="3.-60_DIAS" THEN "0-89 Días"
+            WHEN RANG_NIV_MOR ="4.-90_DIAS" THEN "90+"
+            WHEN RANG_NIV_MOR ="5.-120_DIAS" THEN "90+"
+            WHEN RANG_NIV_MOR ="6.-150_DIAS" THEN "90+"
+            WHEN RANG_NIV_MOR ="7.-180_DIAS" THEN "90+"
+            WHEN RANG_NIV_MOR ="8.-210_DIAS" THEN "90+"
+            else "" end as NIV_MOR_90, 
     CAST(SUM(A.CTA_SDO_ACT) / 1000000 AS FLOAT64) AS CTA_SDO_ACT,
     CAST(SUM(A.PLAN_SDO_ACT) / 1000000 AS FLOAT64) AS SDO_PLAN,
     CAST(SUM(A.IMP_CAST) / 1000000 AS FLOAT64) AS IMP_CAST,
@@ -129,7 +144,7 @@ WHERE
 ;
 
 
--- CREATE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MPP_VPBIM2
--- AS
--- SELECT *
--- FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
+CREATE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MPP_VPBIM2
+AS
+SELECT *
+FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
