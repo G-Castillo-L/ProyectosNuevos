@@ -71,17 +71,17 @@ SELECT DISTINCT
     --     ELSE C.RFM_CREDITO 
     -- END AS RFM_CREDITO,
     CASE 
-        WHEN C.RFM_CREDITO IS NULL THEN 10
-        WHEN C.RFM_CREDITO ="0.inactivo <=12m" THEN 1
-        WHEN C.RFM_CREDITO ="1. Premium" THEN 2
-        WHEN C.RFM_CREDITO ="2. Valiosos" THEN 3
-        WHEN C.RFM_CREDITO ="3. Regular" THEN 4
-        WHEN C.RFM_CREDITO ="4. Por abandonar" THEN 5
-        WHEN C.RFM_CREDITO ="5. Nuevos" THEN 6
-        WHEN C.RFM_CREDITO ="6.Dormant 6m" THEN 7
-        WHEN C.RFM_CREDITO ="7.Dormant 12m" THEN 8
-        WHEN C.RFM_CREDITO ="8.Dormant 18m" THEN 9
-        ELSE 10 
+        WHEN C.RFM_CREDITO IS NULL THEN 9
+        WHEN C.RFM_CREDITO ="0.inactivo <=12m" THEN 0
+        WHEN C.RFM_CREDITO ="1. Premium" THEN 1
+        WHEN C.RFM_CREDITO ="2. Valiosos" THEN 2
+        WHEN C.RFM_CREDITO ="3. Regular" THEN 3
+        WHEN C.RFM_CREDITO ="4. Por abandonar" THEN 4
+        WHEN C.RFM_CREDITO ="5. Nuevos" THEN 5
+        WHEN C.RFM_CREDITO ="6.Dormant 6m" THEN 6
+        WHEN C.RFM_CREDITO ="7.Dormant 12m" THEN 7
+        WHEN C.RFM_CREDITO ="8.Dormant 18m" THEN 8
+        ELSE 9 
     END AS ID_RFM_CREDITO,
     A.TDA_ZNA,
     CASE 
