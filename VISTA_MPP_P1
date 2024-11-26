@@ -62,17 +62,17 @@ SELECT DISTINCT
     --     ELSE F.RFM_CREDITO 
     -- END AS RFM_CREDITO,
     CASE 
-        WHEN F.RFM_CREDITO IS NULL THEN 10
-        WHEN F.RFM_CREDITO ="0.inactivo <=12m" THEN 1
-        WHEN F.RFM_CREDITO ="1. Premium" THEN 2
-        WHEN F.RFM_CREDITO ="2. Valiosos" THEN 3
-        WHEN F.RFM_CREDITO ="3. Regular" THEN 4
-        WHEN F.RFM_CREDITO ="4. Por abandonar" THEN 5
-        WHEN F.RFM_CREDITO ="5. Nuevos" THEN 6
-        WHEN F.RFM_CREDITO ="6.Dormant 6m" THEN 7
-        WHEN F.RFM_CREDITO ="7.Dormant 12m" THEN 8
-        WHEN F.RFM_CREDITO ="8.Dormant 18m" THEN 9
-        ELSE 10 
+        WHEN F.RFM_CREDITO IS NULL THEN 9
+        WHEN F.RFM_CREDITO ="0.inactivo <=12m" THEN 0
+        WHEN F.RFM_CREDITO ="1. Premium" THEN 1
+        WHEN F.RFM_CREDITO ="2. Valiosos" THEN 2
+        WHEN F.RFM_CREDITO ="3. Regular" THEN 3
+        WHEN F.RFM_CREDITO ="4. Por abandonar" THEN 4
+        WHEN F.RFM_CREDITO ="5. Nuevos" THEN 5
+        WHEN F.RFM_CREDITO ="6.Dormant 6m" THEN 6
+        WHEN F.RFM_CREDITO ="7.Dormant 12m" THEN 7
+        WHEN F.RFM_CREDITO ="8.Dormant 18m" THEN 8
+        ELSE 9 
     END AS ID_RFM_CREDITO,
 
     CAST(COUNT(A.CTA_TRACK) AS FLOAT64) AS CUENTAS,
