@@ -202,12 +202,12 @@ WHERE
          (EXTRACT(YEAR FROM DATE_ADD(CURRENT_DATE('America/Mexico_City'), INTERVAL -15 DAY)) - 3) * 100 + EXTRACT(MONTH FROM DATE_ADD(CURRENT_DATE('America/Mexico_City'), INTERVAL -15 DAY)) 
      AND EXTRACT(YEAR FROM DATE_ADD(CURRENT_DATE('America/Mexico_City'), INTERVAL -15 DAY)) * 100 + EXTRACT(MONTH FROM DATE_ADD(CURRENT_DATE('America/Mexico_City'), INTERVAL -15 DAY))
     --AND A.CTA_EDO_CVE NOT IN ('T', '9', '8', 'P', 'Z', 'Q') 
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, CTA_TDA_APE
 
 ;
 
 
-CREATE or REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MPP_VPBIM2
-AS
-SELECT *
-FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
+-- CREATE or REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_MPP_VPBIM2
+-- AS
+-- SELECT *
+-- FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
