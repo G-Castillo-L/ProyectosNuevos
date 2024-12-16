@@ -153,34 +153,61 @@ SELECT DISTINCT
     SUM(CASE WHEN A.ANTIG_ESTR=12 AND CTA_NIV_MOR >= 5 THEN PLAN_SDO_ACT/ 1000000 ELSE 0 END) AS SDOP_90_12M,
     SUM(CASE WHEN A.ANTIG_ESTR=18 AND CTA_NIV_MOR >= 5 THEN PLAN_SDO_ACT/ 1000000 ELSE 0 END) AS SDOP_90_18M,
     
-    CASE 
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="1") THEN "01. Metro Sur"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="2") THEN "02. Metro Norte"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="3") THEN "03. Centro"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="4") THEN "04. Occidente"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="5") THEN "05. Golfo"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="6") THEN "06. Noreste"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="7") THEN "07. Bajio"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="8") THEN "08. Noroeste"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="9") THEN "09. Sureste"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="VAD") THEN "10. Vtas a Distancia"
-	WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA NOT IN ("OTRO", "VAD", '1','2','3','4','5','6','7','8','9')) THEN "11. OTRO"
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.CTA_TDA_APE in ("0782", "0039") THEN "15.- ONLINE"
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Centro Norte' THEN '08.- Centro Norte'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Sur' THEN '12.- Sur'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Centro Sur' THEN '10.- Centro Sur'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Centro' THEN '04.- Metro Centro'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Golfo' THEN '11.- Golfo'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Occidente' THEN '06.- Occidente'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Oriente' THEN '02.- Metro Oriente'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Norte' THEN '03.- Metro Norte'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Norte' THEN '09.- Norte'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Sur' THEN '01.- Metro Sur'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Bajio' THEN '05.- Bajio'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Pacifico' THEN '07.- Pacificio'
-	WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='VDA' THEN '14.- VAD'
-	ELSE '13.- OTRO'
-    END CVE_ZNA,
+  --   CASE 
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="1") THEN "01. Metro Sur"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="2") THEN "02. Metro Norte"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="3") THEN "03. Centro"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="4") THEN "04. Occidente"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="5") THEN "05. Golfo"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="6") THEN "06. Noreste"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="7") THEN "07. Bajio"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="8") THEN "08. Noroeste"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="9") THEN "09. Sureste"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA ="VAD") THEN "10. Vtas a Distancia"
+	-- WHEN (A.TIP_INF IN (110,100) and A.TDA_ZNA NOT IN ("OTRO", "VAD", '1','2','3','4','5','6','7','8','9')) THEN "11. OTRO"
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.CTA_TDA_APE in ("0782", "0039") THEN "15.- ONLINE"
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Centro Norte' THEN '08.- Centro Norte'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Sur' THEN '12.- Sur'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Centro Sur' THEN '10.- Centro Sur'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Centro' THEN '04.- Metro Centro'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Golfo' THEN '11.- Golfo'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Occidente' THEN '06.- Occidente'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Oriente' THEN '02.- Metro Oriente'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Norte' THEN '03.- Metro Norte'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Norte' THEN '09.- Norte'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Metro Sur' THEN '01.- Metro Sur'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Bajio' THEN '05.- Bajio'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='Pacifico' THEN '07.- Pacificio'
+	-- WHEN (A.TIP_INF IN (210,200,220)) AND A.TDA_ZNA ='VDA' THEN '14.- VAD'
+	-- ELSE '13.- OTRO'
+  --   END CVE_ZNA,
+      CASE 
+	WHEN TDA_ZNA ="1" THEN 1.2
+  WHEN TDA_ZNA ="2" THEN 2.2
+  WHEN TDA_ZNA ="3" THEN 3.2
+  WHEN TDA_ZNA ="4" THEN 4.2
+  WHEN TDA_ZNA ="5" THEN 5.2
+  WHEN TDA_ZNA ="6" THEN 6.2
+  WHEN TDA_ZNA ="7" THEN 7.2
+  WHEN TDA_ZNA ="8" THEN 8.2
+  WHEN TDA_ZNA ="10" THEN 10.2
+  WHEN TDA_ZNA ="11" THEN 11.2
+  WHEN TDA_ZNA ="13" THEN 13.2
+  WHEN TDA_ZNA ="Metro Sur" THEN 1.1
+  WHEN TDA_ZNA ="Metro Oriente" THEN 2.1
+  WHEN TDA_ZNA ="Metro Norte" THEN 3.1
+  WHEN TDA_ZNA ="Metro Centro" THEN 4.1
+  WHEN TDA_ZNA ="Bajío" THEN 5.1
+  WHEN TDA_ZNA ="Occidente" THEN 6.1
+  WHEN TDA_ZNA ="Pacífico" THEN 7.1
+  WHEN TDA_ZNA ="Centro Norte" THEN 8.1
+  WHEN TDA_ZNA ="Norte" THEN 9.1
+  WHEN TDA_ZNA ="Centro Sur" THEN 10.1
+	WHEN TDA_ZNA ="Golfo" THEN 11.1
+  WHEN TDA_ZNA ="Sur" THEN 12.1
+  WHEN TDA_ZNA ="VAD" THEN 14.1
+  WHEN TDA_ZNA ="Omnicanal" THEN 14.1
+  END CVE_ZNA,
 
 
     CAST(SUM(CASE WHEN A.IMP_CAST > 0 THEN 1 ELSE 0 END) / 1000 AS FLOAT64) AS CUENTAS_CAST,
