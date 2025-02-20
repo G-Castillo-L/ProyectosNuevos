@@ -1,0 +1,1003 @@
+CREATE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.DIM_COB_FILAS_TIPO AS (
+
+SELECT DISTINCT
+ANIOMES,
+FILA,
+PLAZA,
+ZONA,
+FORMATO,
+TIPO_FILA,
+ID_FILA,
+ETIQUETA,
+SUB_ID
+
+FROM 
+(
+
+SELECT
+EXTRACT(YEAR FROM FCH_INFO)*100+EXTRACT(MONTH FROM FCH_INFO) AS ANIOMES,
+FILA, PLAZA, ZONA, 
+CASE 
+   WHEN FILA IN ('001C','001E','001O','001P','001X','001Y','002C','002I','002L','002O','002P','002W','002X','002Y','003L',
+                 '003W','004I','004L','004W','005P','005Y','014E','014O','014P','014S','014Y','016E','016O','016P','016S',
+                 '016Y','01SD','021E','021O','021P','021S','021Y','028E','028O','028P','028S','028Y','02SD','031E','031O',
+                 '031P','031S','031Y','03SD','041E','041O','041P','041S','041Y','04LB','04SD','04SE','051E','051O','051P',
+                 '051S','051Y','054E','054O','054P','054S','054Y','055E','055O','055P','055S','055Y','05SD','071E','071O',
+                 '071P','071S','071Y','072E','072O','072P','072S','072Y','073E','073O','073P','073S','073Y','085E','085O',
+                 '085P','085S','085Y','501C','501X','502C','502X','901P','901S','901Y','902P','902S','902Y','903P','903S',
+                 '903Y','904P','904S','904Y','905P','905S','905Y','906P','906S','906Y','DILB','DELY','016L','016X','051L',
+                 '051X','071L','071W','071X','055L','055W','055X','001L','001W','003P','003X','003Y','004Y','007C','007P',
+                 '007Y','07SD','507C','031L','031W','031X','072L','072X','041L','041X','054L','054X','014L','014X','073L',
+                 '073X','021L','021W','021X','04MP','007X','507X','06SD','054A','054B','054C','01SC','02SC','07SC','MACS',
+                 '01SM','02SM','07SM','MCNS','04TG','D001','902X','903X','904X','907P','907S','907Y','003M','004M','001N',
+                 '002N','007N','001O','002O','007O','002M','502W','502L','502S','FPDI','004T','WEB1','WEB2','WEB7','003C',
+                 '004C','004K') 
+   THEN 'Central'
+   WHEN FILA IN ('010E','010O','010P','010S','010Y','011E','011O','011P','011S','011Y','017E','017O','017P','017S','017Y','019E','019O','019P',
+                 '019S','019Y','027E','027O','027P','027S','027Y','035E','035O','035P','035S','035Y','036E','036O','036P','036S','036Y','037E',
+                 '037O','037P','037S','037Y','042E','042O','042P','042S','042Y','043E','043O','043P','043S','043Y','044E','044O','044P','044S',
+                 '044Y','046E','046O','046P','046S','046Y','047E','047O','047P','047S','047Y','048E','048O','048P','048S','048Y','050E','050O',
+                 '050P','050S','050Y','057E','057O','057P','057S','057Y','058E','058O','058P','058S','058Y','060E','060O','060P','060S','060Y',
+                 '062E','062O','062P','062S','062Y','065E','065O','065P','065S','065Y','074E','074O','074P','074S','074Y','075E','075O','075P',
+                 '075S','075Y','076E','076O','076P','076S','076Y','077E','077O','077P','077S','077Y','079E','079O','079P','079S','079Y','082E',
+                 '082O','082P','082S','082Y','084E','084O','084P','084S','084Y','089E','089O','089P','089S','089Y','102E','102O','102P','102S',
+                 '102Y','105E','105O','105P','105S','105Y','121E','121O','121P','121S','121Y','126E','126O','126P','126S','126Y','127E','127O',
+                 '127P','127S','127Y','140E','140O','140P','140S','140Y','141E','141O','141P','141S','141Y','161E','161O','161P','161S','161Y',
+                 '169E','169O','169P','169S','169Y','177E','177O','177P','177S','177Y','178E','178O','178P','178S','178Y','192E','192O','192P',
+                 '192S','192Y','194E','194O','194P','194S','194Y','300E','300O','300P','300S','300Y','301E','301O','301P','301S','301Y','302E',
+                 '302O','302P','302S','302Y','303E','303O','303P','303S','303Y','304E','304O','304P','304S','304Y','305E','305O','305P','305S',
+                 '305Y','306E','306O','306P','306S','306Y','307E','307O','307P','307S','307Y','308E','308O','308P','308S','308Y','310E','310O',
+                 '310P','310S','310Y','311E','311O','311P','311S','311Y','312E','312O','312P','312S','312Y','388E','388O','388P','388S','388Y',
+                 '454E','454O','454P','454S','454Y','468E','468O','468P','468S','468Y','471E','471O','471P','471S','471Y','472E','472O','472P',
+                 '472S','472Y','027L','027X','058L','058X','102L','102W','102X','075L','075X','105L','105W','105X','079L','079W','079X','042L',
+                 '042X','303L','303X','304L','304W','304X','035L','035X','060L','060W','060X','126L','126W','126X','084L','084W','084X','011L',
+                 '011X','077L','077X','046L','046X','089L','089X','050L','050X','047L','047X','310L','310W','310X','308L','308W','308X','305L',
+                 '305X','076L','076X','312L','312W','312X','057L','057X','037L','037X','121L','121W','121X','048L','048X','307L','307W','307X',
+                 '017L','017W','017X','062L','062W','062X','044L','044X','065L','065X','311L','311W','311X','036L','036X','302L','302X','019L',
+                 '019X','300L','300X','074X','043L','043W','043X','169L','169W','169X','010L','010X','127L','127W','127X') 
+   THEN 'Tradicional'
+ELSE 'SIN FORMATO' END AS FORMATO,
+
+CASE 
+    WHEN FILA IN ('04SE','001E','014E','016E','021E','028E','031E','041E','051E','054E','055E','071E','072E','073E'
+    		  '010E','011E','017E','019E','027E','035E','036E','037E','042E','043E','044E','046E','047E','048E','050E','057E','058E','060E','062E',
+                  '065E','074E','075E','076E','077E','079E','084E','089E','102E','105E','121E','126E','127E','141E','161E','169E','177E','178E','192E',
+                  '194E','300E','302E','303E','304E','305E','307E','308E','310E','311E','312E','388E','454E','468E','471E','472E') THEN 'E'
+    WHEN FILA IN ('001P','002P','003P','005P','007P','014P','016P','021P','028P','031P','041P','04MP','051P','054P','055P','071P','072P','073P',
+                  '901P','902P','905P','907P',
+                  '010P','011P','017P','019P','027P','035P','036P','037P','042P','043P','044P','046P','047P','048P','050P','057P','058P','060P','062P',
+                  '065P','074P','075P','076P','077P','079P','082P','084P','089P','102P','105P','121P','126P','127P','141P','161P','169P','177P','178P',
+                  '192P','194P','300P','302P','303P','304P','305P','306P','307P','308P','310P','311P','312P','388P','454P','468P','471P','472P') THEN 'P'
+    WHEN FILA IN ('001N','002N','007N','01SM','02SM','07SM','01SD','02SD','07SD','03SD','04SD','05SD','06SD',
+    		  '014S','016S','021S','028S','031S','041S','051S','054S','055S','071S','072S','073S','901S','902S','905S','907S',
+    		  '010S','011S','017S','019S','027S','035S','036S','037S','042S','043S','044S','046S','047S','048S','050S','057S','058S','060S','062S',
+                  '065S','074S','075S','076S','077S','079S','082S','084S','089S','102S','105S','121S','126S','127S','141S','161S','169S','177S','178S',
+                  '192S','194S','300S','302S','303S','304S','305S','306S','307S','308S','310S','311S','312S','388S','454S','468S','471S','472S') THEN 'S'
+    WHEN FILA IN ('001Y','002Y','003Y','004Y','005Y','007Y','014Y','016Y','021Y','028Y','031Y','041Y','051Y','054Y','055Y','071Y','072Y','073Y',
+                  '901Y','902Y','904Y','905Y','907Y',
+                  '010Y','011Y','017Y','019Y','027Y','035Y','036Y','037Y','042Y','043Y','044Y','046Y','047Y','048Y','050Y','057Y','058Y','060Y','062Y',
+                  '065Y','074Y','075Y','076Y','077Y','079Y','082Y','084Y','089Y','102Y','105Y','121Y','126Y','127Y','141Y','161Y','169Y','177Y','178Y',
+                  '192Y','194Y','300Y','302Y','303Y','304Y','305Y','306Y','307Y','308Y','310Y','311Y','312Y','388Y','454Y','468Y','471Y','472Y') THEN 'Y'
+    WHEN FILA IN ('001O','002O','007O','014O','016O','021O','028O','031O','041O','051O','054O','055O','071O','072O','073O',
+    		  '010O','011O','017O','019O','027O','035O','036O','037O','042O','043O','044O','046O','047O','048O','050O','057O','058O','060O','062O',
+                  '065O','074O','075O','076O','077O','079O','082O','084O','089O','102O','105O','121O','126O','127O','141O','161O','169O','177O','178O',
+                  '192O','194O','300O','302O','303O','304O','305O','306O','307O','308O','310O','311O','312O','388O','454O','468O','471O','472O') THEN 'O'
+    WHEN FILA IN ('D001') THEN 'D'
+    WHEN FILA IN ('001W','002W','003W','004W','017W','021W','031W','043W','055W','060W','062W','071W','079W','084W','102W','105W','121W','126W','127W',
+                  '169W','304W','307W','308W','310W','311W','312W') THEN 'W'
+    WHEN FILA IN ('WEB1','WEB2','WEB7') THEN 'B'
+    WHEN FILA IN ('001C','002C','007C','501C','502C','507C','003C','004C') THEN 'C'
+    WHEN FILA IN ('FPDI') THEN 'F'
+    WHEN FILA IN ('04TG') THEN 'G'
+    WHEN FILA IN ('004K') THEN 'K'
+    WHEN FILA IN ('001L','002L','003L','004L','010L','011L','014L','016L','017L','019L','021L','027L','031L','035L','036L','037L','041L','042L','043L',
+                  '044L','046L','047L','048L','050L','051L','054L','055L','057L','058L','060L','062L','065L','071L','072L','073L','075L','076L','077L',
+                  '079L','084L','089L','102L','105L','121L','126L','127L','169L','300L','302L','303L','304L','305L','307L','308L','310L','311L','312L') THEN 'L'
+    WHEN FILA IN ('002M','003M','004M') THEN 'M'
+    WHEN FILA IN ('004T') THEN 'T'
+    WHEN FILA IN ('001X','002X','003X','007X','010X','011X','014X','016X','017X','019X','021X','027X','031X','035X','036X','037X','041X','042X','043X',
+                  '044X','046X','047X','048X','050X','051X','054X','055X','057X','058X','060X','062X','065X','071X','072X','073X','074X','075X','076X',
+                  '077X','079X','084X','089X','102X','105X','121X','126X','127X','169X','300X','302X','303X','304X','305X','307X','308X','310X','311X',
+                  '312X','501X','502X','507X','902X','903X','904X') THEN 'X'
+    WHEN FILA IN ('MACS') THEN 'MS'
+    WHEN FILA IN ('DILB') THEN 'DB'
+    WHEN FILA IN ('DELY') THEN 'DY'
+ELSE 'SIN TIPO' END AS TIPO_FILA,
+
+CASE 
+    WHEN FILA IN ('002W','003W','004W') THEN 1
+    WHEN FILA IN ('002L','003L','004L') THEN 2
+    WHEN FILA IN ('002C','003C','004C') THEN 3
+    WHEN FILA IN ('03SD','04SD','06SD') THEN 4
+    WHEN FILA IN ('001E','04SE') THEN 5
+    WHEN FILA IN ('902X','903X','904X') THEN 6
+    WHEN FILA IN ('002M','003M','004M') THEN 7
+    WHEN FILA IN ('MACS','DELY','DILB','MCNS','04TG','D001','004T','004K','FPDI') THEN 8
+    WHEN FILA IN ('01SD','02SD','07SD') THEN 1
+    WHEN FILA IN ('01SC','02SC','07SC') THEN 2
+    WHEN FILA IN ('01SM','02SM','07SM') THEN 3
+    WHEN FILA IN ('001O','002O','007O') THEN 4
+    WHEN FILA IN ('001N','002N','007N') THEN 5
+    WHEN FILA IN ('901S','902S','907S') THEN 6
+    WHEN FILA IN ('001C','002C','007C') THEN 7
+    WHEN FILA IN ('501C','505C','507C') THEN 8
+    WHEN FILA IN ('001X','002X','007X') THEN 9
+    WHEN FILA IN ('501X','502X','507X') THEN 10
+    WHEN FILA IN ('001Y','005Y','007Y') THEN 11
+    WHEN FILA IN ('901Y','902Y','907Y') THEN 12
+    WHEN FILA IN ('001P','002P','907P') THEN 13
+    WHEN FILA IN ('901P','902P','907P') THEN 14
+    WHEN FILA IN ('WEB1','WEB2','WEB7') THEN 15
+    WHEN FILA IN ('102E','102O','102P','102S','102Y') THEN 1
+    WHEN FILA IN ('304E','304O','304P','304S','304Y') THEN 2
+    WHEN FILA IN ('089E','089O','089P','089S','089Y') THEN 3
+    WHEN FILA IN ('468E','468O','468P','468S','468Y') THEN 4
+    WHEN FILA IN ('031E','031O','031P','031S','031Y') THEN 5
+    WHEN FILA IN ('048E','048O','048P','048S','048Y') THEN 6
+    WHEN FILA IN ('017E','017O','017P','017S','017Y') THEN 7
+    WHEN FILA IN ('065E','065O','065P','065S','065Y') THEN 8
+    WHEN FILA IN ('074E','074O','074P','074S','074Y') THEN 9
+    WHEN FILA IN ('043E','043O','043P','043S','043Y') THEN 10
+    WHEN FILA IN ('169E','169O','169P','169S','169Y') THEN 11
+    WHEN FILA IN ('021E','021O','021P','021S','021Y') THEN 12
+    WHEN FILA IN ('027E','027O','027P','027S','027Y') THEN 1
+    WHEN FILA IN ('058E','058O','058P','058S','058Y') THEN 2
+    WHEN FILA IN ('303E','303O','303P','303S','303Y') THEN 3
+    WHEN FILA IN ('192E','192O','192P','192S','192Y') THEN 4
+    WHEN FILA IN ('077E','077O','077P','077S','077Y') THEN 5
+    WHEN FILA IN ('471E','471O','471P','471S','471Y') THEN 6
+    WHEN FILA IN ('057E','057O','057P','057S','057Y') THEN 7
+    WHEN FILA IN ('036E','036O','036P','036S','036Y') THEN 8
+    WHEN FILA IN ('054E','054O','054P','054S','054Y') THEN 9
+    WHEN FILA IN ('028E','028O','028P','028S','028Y') THEN 10
+    WHEN FILA IN ('010E','010O','010P','010S','010Y') THEN 11
+    WHEN FILA IN ('127E','127O','127P','127S','127Y') THEN 12
+    WHEN FILA IN ('178E','178O','178P','178S','178Y') THEN 13
+    WHEN FILA IN ('105E','105O','105P','105S','105Y') THEN 1
+    WHEN FILA IN ('084E','084O','084P','084S','084Y') THEN 2
+    WHEN FILA IN ('051E','051O','051P','051S','051Y') THEN 3
+    WHEN FILA IN ('454E','454O','454P','454S','454Y') THEN 4
+    WHEN FILA IN ('047E','047O','047P','047S','047Y') THEN 5
+    WHEN FILA IN ('071E','071O','071P','071S','071Y') THEN 6
+    WHEN FILA IN ('062E','062O','062P','062S','062Y') THEN 7
+    WHEN FILA IN ('044E','044O','044P','044S','044Y') THEN 8
+    WHEN FILA IN ('194E','194O','194P','194S','194Y') THEN 9
+    WHEN FILA IN ('311E','311O','311P','311S','311Y') THEN 10
+    WHEN FILA IN ('302E','302O','302P','302S','302Y') THEN 11
+    WHEN FILA IN ('141E','141O','141P','141S','141Y') THEN 12
+    WHEN FILA IN ('075E','075O','075P','075S','075Y') THEN 1
+    WHEN FILA IN ('079E','079O','079P','079S','079Y') THEN 2
+    WHEN FILA IN ('126E','126O','126P','126S','126Y') THEN 3
+    WHEN FILA IN ('472E','472O','472P','472S','472Y') THEN 4
+    WHEN FILA IN ('046E','046O','046P','046S','046Y') THEN 5
+    WHEN FILA IN ('310E','310O','310P','310S','310Y') THEN 6
+    WHEN FILA IN ('305E','305O','305P','305S','305Y') THEN 7
+    WHEN FILA IN ('055E','055O','055P','055S','055Y') THEN 8
+    WHEN FILA IN ('076E','076O','076P','076S','076Y') THEN 9
+    WHEN FILA IN ('037E','037O','037P','037S','037Y') THEN 10
+    WHEN FILA IN ('307E','307O','307P','307S','307Y') THEN 11
+    WHEN FILA IN ('041E','041O','041P','041S','041Y') THEN 12
+    WHEN FILA IN ('019E','019O','019P','019S','019Y') THEN 13
+    WHEN FILA IN ('388E','388O','388P','388S','388Y') THEN 14
+    WHEN FILA IN ('014E','014O','014P','014S','014Y') THEN 15
+    WHEN FILA IN ('042E','042O','042P','042S','042Y') THEN 1
+    WHEN FILA IN ('035E','035O','035P','035S','035Y') THEN 2
+    WHEN FILA IN ('060E','060O','060P','060S','060Y') THEN 3
+    WHEN FILA IN ('016E','016O','016P','016S','016Y') THEN 4
+    WHEN FILA IN ('011E','011O','011P','011S','011Y') THEN 5
+    WHEN FILA IN ('050E','050O','050P','050S','050Y') THEN 6
+    WHEN FILA IN ('308E','308O','308P','308S','308Y') THEN 7
+    WHEN FILA IN ('312E','312O','312P','312S','312Y') THEN 8
+    WHEN FILA IN ('121E','121O','121P','121S','121Y') THEN 9
+    WHEN FILA IN ('072E','072O','072P','072S','072Y') THEN 10
+    WHEN FILA IN ('300E','300O','300P','300S','300Y') THEN 11
+    WHEN FILA IN ('161E','161O','161P','161S','161Y') THEN 12
+    WHEN FILA IN ('177E','177O','177P','177S','177Y') THEN 13
+ELSE 99 END AS ID_FILA,
+
+CASE 
+    WHEN FILA IN ('002W') THEN 'RMB Nacional DILISA ()'
+    WHEN FILA IN ('003W') THEN 'RMB Nacional DILISA (DIGITEX)'
+    WHEN FILA IN ('004W') THEN 'RMB Nacional DILISA (PENTAFON)'
+    WHEN FILA IN ('002L') THEN 'RMB Nacional LPC ()'
+    WHEN FILA IN ('003L') THEN 'RMB Nacional LPC (DIGITEX)'
+    WHEN FILA IN ('004L') THEN 'RMB Nacional LPC (PENTAFON)'
+    WHEN FILA IN ('002C') THEN 'RMA Nacional LPC ()'
+    WHEN FILA IN ('003C') THEN 'RMA Nacional LPC (DIGITEX)'
+    WHEN FILA IN ('004C') THEN 'RMA Nacional LPC (PENTAFON)'
+    WHEN FILA IN ('06SD') THEN 'RMB Nacional SBBD y SBBV ()'
+    WHEN FILA IN ('03SD') THEN 'RMB Nacional SBBD y SBBV (DIGITEX)'
+    WHEN FILA IN ('04SD') THEN 'RMB Nacional SBBD y SBBV (PENTAFON)'
+    WHEN FILA IN ('001E') THEN 'Empleados DILISA y LPC'
+    WHEN FILA IN ('04SE') THEN 'Empleados SBBD y SBBV'
+    WHEN FILA IN ('902X') THEN 'RMA Nacional LPC ()'
+    WHEN FILA IN ('903X') THEN 'RMA Nacional LPC (DIGITEX)'
+    WHEN FILA IN ('904X') THEN 'RMA Nacional LPC (PENTAFON)'
+    WHEN FILA IN ('002M') THEN 'Mini-Pagos SUBURBIA X días ()'
+    WHEN FILA IN ('003M') THEN 'Mini-Pagos SUBURBIA X días (DIGITEX)'
+    WHEN FILA IN ('004M') THEN 'Mini-Pagos SUBURBIA X días (PENTAFON)'
+    WHEN FILA IN ('MACS') THEN 'Macro-Segmento Premium DILISA'
+    WHEN FILA IN ('DELY') THEN 'Delay'
+    WHEN FILA IN ('DILB') THEN 'Riesgo Bajo'
+    WHEN FILA IN ('MCNS') THEN 'Cobranza Mini-Pagos'
+    WHEN FILA IN ('04TG') THEN 'Cobranza Tarjeta-Garantizada'
+    WHEN FILA IN ('D001') THEN 'Cheques Devueltos'
+    WHEN FILA IN ('004T') THEN 'Super Alto Riesgo DILISA (PENTAFON)'
+    WHEN FILA IN ('004K') THEN 'Ingeniería Social DILISA (PENTAFON)'
+    WHEN FILA IN ('FPDI') THEN 'First Payment Default (PENTAFON)'
+    WHEN FILA IN ('01SD') THEN 'RA Metro SBBD y SBBV (NOROESTE)'
+    WHEN FILA IN ('02SD') THEN 'RA Metro SBBD y SBBV (REDES)'
+    WHEN FILA IN ('07SD') THEN 'RA Metro SBBD y SBBV (SEPROAG)'
+    WHEN FILA IN ('01SC') THEN 'Mini-Pagos Suburbia (NOROESTE)'
+    WHEN FILA IN ('02SC') THEN 'Mini-Pagos Suburbia (REDES)'
+    WHEN FILA IN ('07SC') THEN 'Mini-Pagos Suburbia (SEPROAG)'
+    WHEN FILA IN ('01SM') THEN 'RMA Nacional SBBD y SSBV (NOROESTE)'
+    WHEN FILA IN ('02SM') THEN 'RMA Nacional SBBD y SSBV (REDES)'
+    WHEN FILA IN ('07SM') THEN 'RMA Nacional SBBD y SSBV (SEPROAG)'
+    WHEN FILA IN ('001O') THEN 'Mini-Pagos RA Metro NOROESTE'
+    WHEN FILA IN ('002O') THEN 'Mini-Pagos RA Metro REDES'
+    WHEN FILA IN ('007O') THEN 'Mini-Pagos RA Metro SEPROAG'
+    WHEN FILA IN ('001N') THEN 'Mini-Pagos NOROESTE'
+    WHEN FILA IN ('002N') THEN 'Mini-Pagos REDES'
+    WHEN FILA IN ('007N') THEN 'Mini-Pagos SEPROAG'
+    WHEN FILA IN ('901S') THEN 'Contigencia Suburbia NOROESTE'
+    WHEN FILA IN ('902S') THEN 'Contigencia Suburbia REDES'
+    WHEN FILA IN ('907S') THEN 'Contigencia Suburbia SEPROAG'
+    WHEN FILA IN ('001C') THEN 'RMA Nacional LPC (NOROESTE)'
+    WHEN FILA IN ('002C') THEN 'RMA Nacional LPC (REDES)'
+    WHEN FILA IN ('007C') THEN 'RMA Nacional LPC (SEPROAG)'
+    WHEN FILA IN ('501C') THEN 'RMA Interior LPC (NOROESTE)'
+    WHEN FILA IN ('502C') THEN 'RMA Interior LPC (REDES)'
+    WHEN FILA IN ('507C') THEN 'RMA Interior LPC (SEPROAG)'
+    WHEN FILA IN ('001X') THEN 'RMA Nacional DILISA (NOROESTE)'
+    WHEN FILA IN ('002X') THEN 'RMA Nacional DILISA (REDES)'
+    WHEN FILA IN ('007X') THEN 'RMA Nacional DILISA (SEPROAG)'
+    WHEN FILA IN ('501X') THEN 'RMA Interior DILISA (NOROESTE)'
+    WHEN FILA IN ('502X') THEN 'RMA Interior DILISA (REDES)'
+    WHEN FILA IN ('507X') THEN 'RMA Interior DILISA (SEPROAG)'
+    WHEN FILA IN ('001Y') THEN 'RA Metro DILISA (NOROESTE)'
+    WHEN FILA IN ('002Y') THEN 'RA Metro DILISA (REDES)'
+    WHEN FILA IN ('007Y') THEN 'RA Metro DILISA (SEPROAG)'
+    WHEN FILA IN ('901Y') THEN 'Contigencia RA DILISA NOROESTE'
+    WHEN FILA IN ('902Y') THEN 'Contigencia RA DILISA REDES'
+    WHEN FILA IN ('907Y') THEN 'Contigencia RA DILISA SEPROAG'
+    WHEN FILA IN ('001P') THEN 'RA Metro LPC (NOROESTE)'
+    WHEN FILA IN ('002P') THEN 'RA Metro LPC (REDES)'
+    WHEN FILA IN ('007P') THEN 'RA Metro LPC (SEPROAG)'
+    WHEN FILA IN ('901P') THEN 'Contigencia RA LPC NOROESTE'
+    WHEN FILA IN ('902P') THEN 'Contigencia RA LPC REDES'
+    WHEN FILA IN ('907P') THEN 'Contigencia RA LPC SEPROAG'
+    WHEN FILA IN ('WEB1') THEN 'Contigencia RA LPC NOROESTE'
+    WHEN FILA IN ('WEB2') THEN 'Contigencia RA LPC REDES'
+    WHEN FILA IN ('WEB7') THEN 'Contigencia RA LPC SEPROAG'
+    WHEN FILA IN ('102E') THEN 'Empleados Activos Campeche'
+    WHEN FILA IN ('102P') THEN 'Grupo RA y Reest. LPC Campeche'
+    WHEN FILA IN ('102S') THEN 'Grupo X A 149 días Reest. Campeche'
+    WHEN FILA IN ('102Y') THEN 'Grupo X-149 días RA Campeche'
+    WHEN FILA IN ('102O') THEN 'Mini-Pagos RA Campeche'
+    WHEN FILA IN ('304E') THEN 'Empleados Activos Ciudad del Carmen'
+    WHEN FILA IN ('304P') THEN 'Grupo RA y Reest. LPC Ciudad del Carmen'
+    WHEN FILA IN ('304S') THEN 'Grupo X A 149 días Reest. Ciudad del Carmen'
+    WHEN FILA IN ('304Y') THEN 'Grupo X-149 días RA Ciudad del Carmen'
+    WHEN FILA IN ('304O') THEN 'Mini-Pagos RA Ciudad del Carmen'
+    WHEN FILA IN ('089E') THEN 'Empleados Activos Durango'
+    WHEN FILA IN ('089P') THEN 'Grupo RA y Reest. LPC Durango'
+    WHEN FILA IN ('089S') THEN 'Grupo X A 149 días Reest. Durango'
+    WHEN FILA IN ('089Y') THEN 'Grupo X-149 días RA Durango'
+    WHEN FILA IN ('089O') THEN 'Mini-Pagos RA Durango'
+    WHEN FILA IN ('468E') THEN 'Empleados Activos Monclova'
+    WHEN FILA IN ('468P') THEN 'Grupo RA y Reest. LPC Monclova'
+    WHEN FILA IN ('468S') THEN 'Grupo X A 149 días Reest. Monclova'
+    WHEN FILA IN ('468Y') THEN 'Grupo X-149 días RA Monclova'
+    WHEN FILA IN ('468O') THEN 'Mini-Pagos RA Monclova'
+    WHEN FILA IN ('031E') THEN 'Empleados Activos Monterrey'
+    WHEN FILA IN ('031P') THEN 'Grupo RA y Reest. LPC Monterrey'
+    WHEN FILA IN ('031S') THEN 'Grupo X A 149 días Reest. Monterrey'
+    WHEN FILA IN ('031Y') THEN 'Grupo X-149 días RA Monterrey'
+    WHEN FILA IN ('031O') THEN 'Mini-Pagos RA Monterrey'
+    WHEN FILA IN ('048E') THEN 'Empleados Activos Pachuca'
+    WHEN FILA IN ('048P') THEN 'Grupo RA y Reest. LPC Pachuca'
+    WHEN FILA IN ('048S') THEN 'Grupo X A 149 días Reest. Pachuca'
+    WHEN FILA IN ('048Y') THEN 'Grupo X-149 días RA Pachuca'
+    WHEN FILA IN ('048O') THEN 'Mini-Pagos RA Pachuca'
+    WHEN FILA IN ('017E') THEN 'Empleados Activos Poza Rica'
+    WHEN FILA IN ('017P') THEN 'Grupo RA y Reest. LPC Poza Rica'
+    WHEN FILA IN ('017S') THEN 'Grupo X A 149 días Reest. Poza Rica'
+    WHEN FILA IN ('017Y') THEN 'Grupo X-149 días RA Poza Rica'
+    WHEN FILA IN ('017O') THEN 'Mini-Pagos RA Poza Rica'
+    WHEN FILA IN ('065E') THEN 'Empleados Activos Saltillo'
+    WHEN FILA IN ('065P') THEN 'Grupo RA y Reest. LPC Saltillo'
+    WHEN FILA IN ('065S') THEN 'Grupo X A 149 días Reest. Saltillo'
+    WHEN FILA IN ('065Y') THEN 'Grupo X-149 días RA Saltillo'
+    WHEN FILA IN ('065O') THEN 'Mini-Pagos RA Saltillo'
+    WHEN FILA IN ('074E') THEN 'Empleados Activos Toluca'
+    WHEN FILA IN ('074P') THEN 'Grupo RA y Reest. LPC Toluca'
+    WHEN FILA IN ('074S') THEN 'Grupo X A 149 días Reest. Toluca'
+    WHEN FILA IN ('074Y') THEN 'Grupo X-149 días RA Toluca'
+    WHEN FILA IN ('074O') THEN 'Mini-Pagos RA Toluca'
+    WHEN FILA IN ('043E') THEN 'Empleados Activos Torreón'
+    WHEN FILA IN ('043P') THEN 'Grupo RA y Reest. LPC Torreón'
+    WHEN FILA IN ('043S') THEN 'Grupo X A 149 días Reest. Torreón'
+    WHEN FILA IN ('043Y') THEN 'Grupo X-149 días RA Torreón'
+    WHEN FILA IN ('043O') THEN 'Mini-Pagos RA Torreón'
+    WHEN FILA IN ('169E') THEN 'Empleados Activos Tuxpán'
+    WHEN FILA IN ('169P') THEN 'Grupo RA y Reest. LPC Tuxpán'
+    WHEN FILA IN ('169S') THEN 'Grupo X A 149 días Reest. Tuxpán'
+    WHEN FILA IN ('169Y') THEN 'Grupo X-149 días RA Tuxpán'
+    WHEN FILA IN ('169O') THEN 'Mini-Pagos RA Tuxpán'
+    WHEN FILA IN ('021E') THEN 'Empleados Activos Villahermosa'
+    WHEN FILA IN ('021P') THEN 'Grupo RA y Reest. LPC Villahermosa'
+    WHEN FILA IN ('021S') THEN 'Grupo X A 149 días Reest. Villahermosa'
+    WHEN FILA IN ('021Y') THEN 'Grupo X-149 días RA Villahermosa'
+    WHEN FILA IN ('021O') THEN 'Mini-Pagos RA Villahermosa'
+    WHEN FILA IN ('027E') THEN 'Empleados Activos Acapulco'
+    WHEN FILA IN ('027P') THEN 'Grupo RA y Reest. LPC Acapulco'
+    WHEN FILA IN ('027S') THEN 'Grupo X A 149 días Reest. Acapulco'
+    WHEN FILA IN ('027Y') THEN 'Grupo X-149 días RA Acapulco'
+    WHEN FILA IN ('027O') THEN 'Mini-Pagos RA Acapulco'
+    WHEN FILA IN ('058E') THEN 'Empleados Activos Aguascalientes'
+    WHEN FILA IN ('058P') THEN 'Grupo RA y Reest. LPC Aguascalientes'
+    WHEN FILA IN ('058S') THEN 'Grupo X A 149 días Reest. Aguascalientes'
+    WHEN FILA IN ('058Y') THEN 'Grupo X-149 días RA Aguascalientes'
+    WHEN FILA IN ('058O') THEN 'Mini-Pagos RA Aguascalientes'
+    WHEN FILA IN ('303E') THEN 'Empleados Activos Chilpancingo'
+    WHEN FILA IN ('303P') THEN 'Grupo RA y Reest. LPC Chilpancingo'
+    WHEN FILA IN ('303S') THEN 'Grupo X A 149 días Reest. Chilpancingo'
+    WHEN FILA IN ('303Y') THEN 'Grupo X-149 días RA Chilpancingo'
+    WHEN FILA IN ('303O') THEN 'Mini-Pagos RA Chilpancingo'
+    WHEN FILA IN ('192E') THEN 'Empleados Activos Cuautla'
+    WHEN FILA IN ('192P') THEN 'Grupo RA y Reest. LPC Cuautla'
+    WHEN FILA IN ('192S') THEN 'Grupo X A 149 días Reest. Cuautla'
+    WHEN FILA IN ('192Y') THEN 'Grupo X-149 días RA Cuautla'
+    WHEN FILA IN ('192O') THEN 'Mini-Pagos RA Cuautla'
+    WHEN FILA IN ('077E') THEN 'Empleados Activos Cuernavaca'
+    WHEN FILA IN ('077P') THEN 'Grupo RA y Reest. LPC Cuernavaca'
+    WHEN FILA IN ('077S') THEN 'Grupo X A 149 días Reest. Cuernavaca'
+    WHEN FILA IN ('077Y') THEN 'Grupo X-149 días RA Cuernavaca'
+    WHEN FILA IN ('077O') THEN 'Mini-Pagos RA Cuernavaca'
+    WHEN FILA IN ('471E') THEN 'Empleados Activos Fresnillo'
+    WHEN FILA IN ('471P') THEN 'Grupo RA y Reest. LPC Fresnillo'
+    WHEN FILA IN ('471S') THEN 'Grupo X A 149 días Reest. Fresnillo'
+    WHEN FILA IN ('471Y') THEN 'Grupo X-149 días RA Fresnillo'
+    WHEN FILA IN ('471O') THEN 'Mini-Pagos RA Fresnillo'
+    WHEN FILA IN ('057E') THEN 'Empleados Activos Morelia'
+    WHEN FILA IN ('057P') THEN 'Grupo RA y Reest. LPC Morelia'
+    WHEN FILA IN ('057S') THEN 'Grupo X A 149 días Reest. Morelia'
+    WHEN FILA IN ('057Y') THEN 'Grupo X-149 días RA Morelia'
+    WHEN FILA IN ('057O') THEN 'Mini-Pagos RA Morelia'
+    WHEN FILA IN ('036E') THEN 'Empleados Activos San Luis Potosí'
+    WHEN FILA IN ('036P') THEN 'Grupo RA y Reest. LPC San Luis Potosí'
+    WHEN FILA IN ('036S') THEN 'Grupo X A 149 días Reest. San Luis Potosí'
+    WHEN FILA IN ('036Y') THEN 'Grupo X-149 días RA San Luis Potosí'
+    WHEN FILA IN ('036O') THEN 'Mini-Pagos RA San Luis Potosí'
+    WHEN FILA IN ('054E') THEN 'Empleados Activos Tepic'
+    WHEN FILA IN ('054P') THEN 'Grupo RA y Reest. LPC Tepic'
+    WHEN FILA IN ('054S') THEN 'Grupo X A 149 días Reest. Tepic'
+    WHEN FILA IN ('054Y') THEN 'Grupo X-149 días RA Tepic'
+    WHEN FILA IN ('054O') THEN 'Mini-Pagos RA Tepic'
+    WHEN FILA IN ('028E') THEN 'Empleados Activos Veracruz'
+    WHEN FILA IN ('028P') THEN 'Grupo RA y Reest. LPC Veracruz'
+    WHEN FILA IN ('028S') THEN 'Grupo X A 149 días Reest. Veracruz'
+    WHEN FILA IN ('028Y') THEN 'Grupo X-149 días RA Veracruz'
+    WHEN FILA IN ('028O') THEN 'Mini-Pagos RA Veracruz'
+    WHEN FILA IN ('010E') THEN 'Empleados Activos Xalapa'
+    WHEN FILA IN ('010P') THEN 'Grupo RA y Reest. LPC Xalapa'
+    WHEN FILA IN ('010S') THEN 'Grupo X A 149 días Reest. Xalapa'
+    WHEN FILA IN ('010Y') THEN 'Grupo X-149 días RA Xalapa'
+    WHEN FILA IN ('010O') THEN 'Mini-Pagos RA Xalapa'
+    WHEN FILA IN ('127E') THEN 'Empleados Activos Zacatecas'
+    WHEN FILA IN ('127P') THEN 'Grupo RA y Reest. LPC Zacatecas'
+    WHEN FILA IN ('127S') THEN 'Grupo X A 149 días Reest. Zacatecas'
+    WHEN FILA IN ('127Y') THEN 'Grupo X-149 días RA Zacatecas'
+    WHEN FILA IN ('127O') THEN 'Mini-Pagos RA Zacatecas'
+    WHEN FILA IN ('178E') THEN 'Empleados Activos Zamora'
+    WHEN FILA IN ('178P') THEN 'Grupo RA y Reest. LPC Zamora'
+    WHEN FILA IN ('178S') THEN 'Grupo X A 149 días Reest. Zamora'
+    WHEN FILA IN ('178Y') THEN 'Grupo X-149 días RA Zamora'
+    WHEN FILA IN ('178O') THEN 'Mini-Pagos RA Zamora'
+    WHEN FILA IN ('105E') THEN 'Empleados Activos Celaya'
+    WHEN FILA IN ('105P') THEN 'Grupo RA y Reest. LPC Celaya'
+    WHEN FILA IN ('105S') THEN 'Grupo X A 149 días Reest. Celaya'
+    WHEN FILA IN ('105Y') THEN 'Grupo X-149 días RA Celaya'
+    WHEN FILA IN ('105O') THEN 'Mini-Pagos RA Celaya'
+    WHEN FILA IN ('084E') THEN 'Empleados Activos Colima'
+    WHEN FILA IN ('084P') THEN 'Grupo RA y Reest. LPC Colima'
+    WHEN FILA IN ('084S') THEN 'Grupo X A 149 días Reest. Colima'
+    WHEN FILA IN ('084Y') THEN 'Grupo X-149 días RA Colima'
+    WHEN FILA IN ('084O') THEN 'Mini-Pagos RA Colima'
+    WHEN FILA IN ('051E') THEN 'Empleados Activos Guadalajara'
+    WHEN FILA IN ('051P') THEN 'Grupo RA y Reest. LPC Guadalajara'
+    WHEN FILA IN ('051S') THEN 'Grupo X A 149 días Reest. Guadalajara'
+    WHEN FILA IN ('051Y') THEN 'Grupo X-149 días RA Guadalajara'
+    WHEN FILA IN ('051O') THEN 'Mini-Pagos RA Guadalajara'
+    WHEN FILA IN ('454E') THEN 'Empleados Activos Guanajuato'
+    WHEN FILA IN ('454P') THEN 'Grupo RA y Reest. LPC Guanajuato'
+    WHEN FILA IN ('454S') THEN 'Grupo X A 149 días Reest. Guanajuato'
+    WHEN FILA IN ('454Y') THEN 'Grupo X-149 días RA Guanajuato'
+    WHEN FILA IN ('454O') THEN 'Mini-Pagos RA Guanajuato'
+    WHEN FILA IN ('047E') THEN 'Empleados Activos Irapuato'
+    WHEN FILA IN ('047P') THEN 'Grupo RA y Reest. LPC Irapuato'
+    WHEN FILA IN ('047S') THEN 'Grupo X A 149 días Reest. Irapuato'
+    WHEN FILA IN ('047Y') THEN 'Grupo X-149 días RA Irapuato'
+    WHEN FILA IN ('047O') THEN 'Mini-Pagos RA Irapuato'
+    WHEN FILA IN ('071E') THEN 'Empleados Activos León'
+    WHEN FILA IN ('071P') THEN 'Grupo RA y Reest. LPC León'
+    WHEN FILA IN ('071S') THEN 'Grupo X A 149 días Reest. León'
+    WHEN FILA IN ('071Y') THEN 'Grupo X-149 días RA León'
+    WHEN FILA IN ('071O') THEN 'Mini-Pagos RA León'
+    WHEN FILA IN ('062E') THEN 'Empleados Activos Puerto Vallarta'
+    WHEN FILA IN ('062P') THEN 'Grupo RA y Reest. LPC Puerto Vallarta'
+    WHEN FILA IN ('062S') THEN 'Grupo X A 149 días Reest. Puerto Vallarta'
+    WHEN FILA IN ('062Y') THEN 'Grupo X-149 días RA Puerto Vallarta'
+    WHEN FILA IN ('062O') THEN 'Mini-Pagos RA Puerto Vallarta'
+    WHEN FILA IN ('044E') THEN 'Empleados Activos Querétaro'
+    WHEN FILA IN ('044P') THEN 'Grupo RA y Reest. LPC Querétaro'
+    WHEN FILA IN ('044S') THEN 'Grupo X A 149 días Reest. Querétaro'
+    WHEN FILA IN ('044Y') THEN 'Grupo X-149 días RA Querétaro'
+    WHEN FILA IN ('044O') THEN 'Mini-Pagos RA Querétaro'
+    WHEN FILA IN ('194E') THEN 'Empleados Activos Salamanca'
+    WHEN FILA IN ('194P') THEN 'Grupo RA y Reest. LPC Salamanca'
+    WHEN FILA IN ('194S') THEN 'Grupo X A 149 días Reest. Salamanca'
+    WHEN FILA IN ('194Y') THEN 'Grupo X-149 días RA Salamanca'
+    WHEN FILA IN ('194O') THEN 'Mini-Pagos RA Salamanca'
+    WHEN FILA IN ('311E') THEN 'Empleados Activos San Juan del Río'
+    WHEN FILA IN ('311P') THEN 'Grupo RA y Reest. LPC San Juan del Río'
+    WHEN FILA IN ('311S') THEN 'Grupo X A 149 días Reest. San Juan del Río'
+    WHEN FILA IN ('311Y') THEN 'Grupo X-149 días RA San Juan del Río'
+    WHEN FILA IN ('311O') THEN 'Mini-Pagos RA San Juan del Río'
+    WHEN FILA IN ('302E') THEN 'Empleados Activos San Miguel de Allende'
+    WHEN FILA IN ('302P') THEN 'Grupo RA y Reest. LPC San Miguel de Allende'
+    WHEN FILA IN ('302S') THEN 'Grupo X A 149 días Reest. San Miguel de Allende'
+    WHEN FILA IN ('302Y') THEN 'Grupo X-149 días RA San Miguel de Allende'
+    WHEN FILA IN ('302O') THEN 'Mini-Pagos RA San Miguel de Allende'
+    WHEN FILA IN ('141E') THEN 'Empleados Activos Uriangato'
+    WHEN FILA IN ('141P') THEN 'Grupo RA y Reest. LPC Uriangato'
+    WHEN FILA IN ('141S') THEN 'Grupo X A 149 días Reest. Uriangato'
+    WHEN FILA IN ('141Y') THEN 'Grupo X-149 días RA Uriangato'
+    WHEN FILA IN ('141O') THEN 'Mini-Pagos RA Uriangato'
+    WHEN FILA IN ('075E') THEN 'Empleados Activos Cancún'
+    WHEN FILA IN ('075P') THEN 'Grupo RA y Reest. LPC Cancún'
+    WHEN FILA IN ('075S') THEN 'Grupo X A 149 días Reest. Cancún'
+    WHEN FILA IN ('075Y') THEN 'Grupo X-149 días RA Cancún'
+    WHEN FILA IN ('075O') THEN 'Mini-Pagos RA Cancún'
+    WHEN FILA IN ('079E') THEN 'Empleados Activos Chetumal'
+    WHEN FILA IN ('079P') THEN 'Grupo RA y Reest. LPC Chetumal'
+    WHEN FILA IN ('079S') THEN 'Grupo X A 149 días Reest. Chetumal'
+    WHEN FILA IN ('079Y') THEN 'Grupo X-149 días RA Chetumal'
+    WHEN FILA IN ('079O') THEN 'Mini-Pagos RA Chetumal'
+    WHEN FILA IN ('126E') THEN 'Empleados Activos Ciudad Victoria'
+    WHEN FILA IN ('126P') THEN 'Grupo RA y Reest. LPC Ciudad Victoria'
+    WHEN FILA IN ('126S') THEN 'Grupo X A 149 días Reest. Ciudad Victoria'
+    WHEN FILA IN ('126Y') THEN 'Grupo X-149 días RA Ciudad Victoria'
+    WHEN FILA IN ('126O') THEN 'Mini-Pagos RA Ciudad Victoria'
+    WHEN FILA IN ('472E') THEN 'Empleados Activos Comitán'
+    WHEN FILA IN ('472P') THEN 'Grupo RA y Reest. LPC Comitán'
+    WHEN FILA IN ('472S') THEN 'Grupo X A 149 días Reest. Comitán'
+    WHEN FILA IN ('472Y') THEN 'Grupo X-149 días RA Comitán'
+    WHEN FILA IN ('472O') THEN 'Mini-Pagos RA Comitán'
+    WHEN FILA IN ('046E') THEN 'Empleados Activos Culiacán'
+    WHEN FILA IN ('046P') THEN 'Grupo RA y Reest. LPC Culiacán'
+    WHEN FILA IN ('046S') THEN 'Grupo X A 149 días Reest. Culiacán'
+    WHEN FILA IN ('046Y') THEN 'Grupo X-149 días RA Culiacán'
+    WHEN FILA IN ('046O') THEN 'Mini-Pagos RA Culiacán'
+    WHEN FILA IN ('310E') THEN 'Empleados Activos Istmo'
+    WHEN FILA IN ('310P') THEN 'Grupo RA y Reest. LPC Istmo'
+    WHEN FILA IN ('310S') THEN 'Grupo X A 149 días Reest. Istmo'
+    WHEN FILA IN ('310Y') THEN 'Grupo X-149 días RA Istmo'
+    WHEN FILA IN ('310O') THEN 'Mini-Pagos RA Istmo'
+    WHEN FILA IN ('305E') THEN 'Empleados Activos Los Mochis'
+    WHEN FILA IN ('305P') THEN 'Grupo RA y Reest. LPC Los Mochis'
+    WHEN FILA IN ('305S') THEN 'Grupo X A 149 días Reest. Los Mochis'
+    WHEN FILA IN ('305Y') THEN 'Grupo X-149 días RA Los Mochis'
+    WHEN FILA IN ('305O') THEN 'Mini-Pagos RA Los Mochis'
+    WHEN FILA IN ('055E') THEN 'Empleados Activos Mazatlán'
+    WHEN FILA IN ('055P') THEN 'Grupo RA y Reest. LPC Mazatlán'
+    WHEN FILA IN ('055S') THEN 'Grupo X A 149 días Reest. Mazatlán'
+    WHEN FILA IN ('055Y') THEN 'Grupo X-149 días RA Mazatlán'
+    WHEN FILA IN ('055O') THEN 'Mini-Pagos RA Mazatlán'
+    WHEN FILA IN ('076E') THEN 'Empleados Activos Mérida'
+    WHEN FILA IN ('076P') THEN 'Grupo RA y Reest. LPC Mérida'
+    WHEN FILA IN ('076S') THEN 'Grupo X A 149 días Reest. Mérida'
+    WHEN FILA IN ('076Y') THEN 'Grupo X-149 días RA Mérida'
+    WHEN FILA IN ('076O') THEN 'Mini-Pagos RA Mérida'
+    WHEN FILA IN ('037E') THEN 'Empleados Activos Oaxaca'
+    WHEN FILA IN ('037P') THEN 'Grupo RA y Reest. LPC Oaxaca'
+    WHEN FILA IN ('037S') THEN 'Grupo X A 149 días Reest. Oaxaca'
+    WHEN FILA IN ('037Y') THEN 'Grupo X-149 días RA Oaxaca'
+    WHEN FILA IN ('037O') THEN 'Mini-Pagos RA Oaxaca'
+    WHEN FILA IN ('307E') THEN 'Empleados Activos Playa del Carmen'
+    WHEN FILA IN ('307P') THEN 'Grupo RA y Reest. LPC Playa del Carmen'
+    WHEN FILA IN ('307S') THEN 'Grupo X A 149 días Reest. Playa del Carmen'
+    WHEN FILA IN ('307Y') THEN 'Grupo X-149 días RA Playa del Carmen'
+    WHEN FILA IN ('307O') THEN 'Mini-Pagos RA Playa del Carmen'    
+    WHEN FILA IN ('041E') THEN 'Empleados Activos Tampico'
+    WHEN FILA IN ('041P') THEN 'Grupo RA y Reest. LPC Tampico'
+    WHEN FILA IN ('041S') THEN 'Grupo X A 149 días Reest. Tampico'
+    WHEN FILA IN ('041Y') THEN 'Grupo X-149 días RA Tampico'
+    WHEN FILA IN ('041O') THEN 'Mini-Pagos RA Tampico'
+    WHEN FILA IN ('019E') THEN 'Empleados Activos Tapachula'
+    WHEN FILA IN ('019P') THEN 'Grupo RA y Reest. LPC Tapachula'
+    WHEN FILA IN ('019S') THEN 'Grupo X A 149 días Reest. Tapachula'
+    WHEN FILA IN ('019Y') THEN 'Grupo X-149 días RA Tapachula'
+    WHEN FILA IN ('019O') THEN 'Mini-Pagos RA Tapachula'
+    WHEN FILA IN ('388E') THEN 'Empleados Activos Tuxtepec'
+    WHEN FILA IN ('388P') THEN 'Grupo RA y Reest. LPC Tuxtepec'
+    WHEN FILA IN ('388S') THEN 'Grupo X A 149 días Reest. Tuxtepec'
+    WHEN FILA IN ('388Y') THEN 'Grupo X-149 días RA Tuxtepec'
+    WHEN FILA IN ('388O') THEN 'Mini-Pagos RA Tuxtepec'
+    WHEN FILA IN ('014E') THEN 'Empleados Activos Tuxtla Gutiérrez'
+    WHEN FILA IN ('014P') THEN 'Grupo RA y Reest. LPC Tuxtla Gutiérrez'
+    WHEN FILA IN ('014S') THEN 'Grupo X A 149 días Reest. Tuxtla Gutiérrez'
+    WHEN FILA IN ('014Y') THEN 'Grupo X-149 días RA Tuxtla Gutiérrez'
+    WHEN FILA IN ('014O') THEN 'Mini-Pagos RA Tuxtla Gutiérrez'
+    WHEN FILA IN ('042E') THEN 'Empleados Activos Chihuahua'
+    WHEN FILA IN ('042P') THEN 'Grupo RA y Reest. LPC Chihuahua'
+    WHEN FILA IN ('042S') THEN 'Grupo X A 149 días Reest. Chihuahua'
+    WHEN FILA IN ('042Y') THEN 'Grupo X-149 días RA Chihuahua'
+    WHEN FILA IN ('042O') THEN 'Mini-Pagos RA Chihuahua'
+    WHEN FILA IN ('035E') THEN 'Empleados Activos Ciudad Juárez'
+    WHEN FILA IN ('035P') THEN 'Grupo RA y Reest. LPC Ciudad Juárez'
+    WHEN FILA IN ('035S') THEN 'Grupo X A 149 días Reest. Ciudad Juárez'
+    WHEN FILA IN ('035Y') THEN 'Grupo X-149 días RA Ciudad Juárez'
+    WHEN FILA IN ('035O') THEN 'Mini-Pagos RA Ciudad Juárez'
+    WHEN FILA IN ('060E') THEN 'Empleados Activos Ciudad Obregón'
+    WHEN FILA IN ('060P') THEN 'Grupo RA y Reest. LPC Ciudad Obregón'
+    WHEN FILA IN ('060S') THEN 'Grupo X A 149 días Reest. Ciudad Obregón'
+    WHEN FILA IN ('060Y') THEN 'Grupo X-149 días RA Ciudad Obregón'
+    WHEN FILA IN ('060O') THEN 'Mini-Pagos RA Ciudad Obregón'
+    WHEN FILA IN ('016E') THEN 'Empleados Activos Coatzacoalcos'
+    WHEN FILA IN ('016P') THEN 'Grupo RA y Reest. LPC Coatzacoalcos'
+    WHEN FILA IN ('016S') THEN 'Grupo X A 149 días Reest. Coatzacoalcos'
+    WHEN FILA IN ('016Y') THEN 'Grupo X-149 días RA Coatzacoalcos'
+    WHEN FILA IN ('016O') THEN 'Mini-Pagos RA Coatzacoalcos'
+    WHEN FILA IN ('011E') THEN 'Empleados Activos Córdoba'
+    WHEN FILA IN ('011P') THEN 'Grupo RA y Reest. LPC Córdoba'
+    WHEN FILA IN ('011S') THEN 'Grupo X A 149 días Reest. Córdoba'
+    WHEN FILA IN ('011Y') THEN 'Grupo X-149 días RA Córdoba'
+    WHEN FILA IN ('011O') THEN 'Mini-Pagos RA Córdoba'
+    WHEN FILA IN ('050E') THEN 'Empleados Activos Hermosillo'
+    WHEN FILA IN ('050P') THEN 'Grupo RA y Reest. LPC Hermosillo'
+    WHEN FILA IN ('050S') THEN 'Grupo X A 149 días Reest. Hermosillo'
+    WHEN FILA IN ('050Y') THEN 'Grupo X-149 días RA Hermosillo'
+    WHEN FILA IN ('050O') THEN 'Mini-Pagos RA Hermosillo'
+    WHEN FILA IN ('308E') THEN 'Empleados Activos La Paz'
+    WHEN FILA IN ('308P') THEN 'Grupo RA y Reest. LPC La Paz'
+    WHEN FILA IN ('308S') THEN 'Grupo X A 149 días Reest. La Paz'
+    WHEN FILA IN ('308Y') THEN 'Grupo X-149 días RA La Paz'
+    WHEN FILA IN ('308O') THEN 'Mini-Pagos RA La Paz'
+    WHEN FILA IN ('312E') THEN 'Empleados Activos Mexicali'
+    WHEN FILA IN ('312P') THEN 'Grupo RA y Reest. LPC Mexicali'
+    WHEN FILA IN ('312S') THEN 'Grupo X A 149 días Reest. Mexicali'
+    WHEN FILA IN ('312Y') THEN 'Grupo X-149 días RA Mexicali'
+    WHEN FILA IN ('312O') THEN 'Mini-Pagos RA Mexicali'
+    WHEN FILA IN ('121E') THEN 'Empleados Activos Orizaba'
+    WHEN FILA IN ('121P') THEN 'Grupo RA y Reest. LPC Orizaba'
+    WHEN FILA IN ('121S') THEN 'Grupo X A 149 días Reest. Orizaba'
+    WHEN FILA IN ('121Y') THEN 'Grupo X-149 días RA Orizaba'
+    WHEN FILA IN ('121O') THEN 'Mini-Pagos RA Orizaba'
+    WHEN FILA IN ('072E') THEN 'Empleados Activos Puebla'
+    WHEN FILA IN ('072P') THEN 'Grupo RA y Reest. LPC Puebla'
+    WHEN FILA IN ('072S') THEN 'Grupo X A 149 días Reest. Puebla'
+    WHEN FILA IN ('072Y') THEN 'Grupo X-149 días RA Puebla'
+    WHEN FILA IN ('072O') THEN 'Mini-Pagos RA Puebla'
+    WHEN FILA IN ('300E') THEN 'Empleados Activos Tehuacán'
+    WHEN FILA IN ('300P') THEN 'Grupo RA y Reest. LPC Tehuacán'
+    WHEN FILA IN ('300S') THEN 'Grupo X A 149 días Reest. Tehuacán'
+    WHEN FILA IN ('300Y') THEN 'Grupo X-149 días RA Tehuacán'
+    WHEN FILA IN ('300O') THEN 'Mini-Pagos RA Tehuacán'
+    WHEN FILA IN ('161E') THEN 'Empleados Activos Tijuana'
+    WHEN FILA IN ('161P') THEN 'Grupo RA y Reest. LPC Tijuana'
+    WHEN FILA IN ('161S') THEN 'Grupo X A 149 días Reest. Tijuana'
+    WHEN FILA IN ('161Y') THEN 'Grupo X-149 días RA Tijuana'
+    WHEN FILA IN ('161O') THEN 'Mini-Pagos RA Tijuana'
+    WHEN FILA IN ('177E') THEN 'Empleados Activos Tlaxcala'
+    WHEN FILA IN ('177P') THEN 'Grupo RA y Reest. LPC Tlaxcala'
+    WHEN FILA IN ('177S') THEN 'Grupo X A 149 días Reest. Tlaxcala'
+    WHEN FILA IN ('177Y') THEN 'Grupo X-149 días RA Tlaxcala'
+    WHEN FILA IN ('177O') THEN 'Mini-Pagos RA Tlaxcala'
+ELSE 'SinEtiqueta' END AS ETIQUETA,    
+
+CASE 
+    WHEN FILA IN ('002W') THEN 1
+    WHEN FILA IN ('003W') THEN 2
+    WHEN FILA IN ('004W') THEN 3
+    WHEN FILA IN ('002L') THEN 1
+    WHEN FILA IN ('003L') THEN 2
+    WHEN FILA IN ('004L') THEN 3
+    WHEN FILA IN ('002C') THEN 1
+    WHEN FILA IN ('003C') THEN 2
+    WHEN FILA IN ('004C') THEN 3
+    WHEN FILA IN ('06SD') THEN 1
+    WHEN FILA IN ('03SD') THEN 2
+    WHEN FILA IN ('04SD') THEN 3
+    WHEN FILA IN ('001E') THEN 1
+    WHEN FILA IN ('04SE') THEN 2
+    WHEN FILA IN ('902X') THEN 1
+    WHEN FILA IN ('903X') THEN 2
+    WHEN FILA IN ('904X') THEN 3
+    WHEN FILA IN ('002M') THEN 1
+    WHEN FILA IN ('003M') THEN 2
+    WHEN FILA IN ('004M') THEN 3
+    WHEN FILA IN ('MACS') THEN 1
+    WHEN FILA IN ('DELY') THEN 2
+    WHEN FILA IN ('DILB') THEN 3
+    WHEN FILA IN ('MCNS') THEN 4
+    WHEN FILA IN ('04TG') THEN 5
+    WHEN FILA IN ('D001') THEN 6
+    WHEN FILA IN ('004T') THEN 7
+    WHEN FILA IN ('004K') THEN 8
+    WHEN FILA IN ('FPDI') THEN 9
+    WHEN FILA IN ('01SD') THEN 1
+    WHEN FILA IN ('02SD') THEN 2
+    WHEN FILA IN ('07SD') THEN 3
+    WHEN FILA IN ('01SC') THEN 1
+    WHEN FILA IN ('02SC') THEN 2
+    WHEN FILA IN ('07SC') THEN 3
+    WHEN FILA IN ('01SM') THEN 1
+    WHEN FILA IN ('02SM') THEN 2
+    WHEN FILA IN ('07SM') THEN 3
+    WHEN FILA IN ('001O') THEN 1
+    WHEN FILA IN ('002O') THEN 2
+    WHEN FILA IN ('007O') THEN 3
+    WHEN FILA IN ('001N') THEN 1
+    WHEN FILA IN ('002N') THEN 2
+    WHEN FILA IN ('007N') THEN 3
+    WHEN FILA IN ('901S') THEN 1
+    WHEN FILA IN ('902S') THEN 2
+    WHEN FILA IN ('907S') THEN 3
+    WHEN FILA IN ('001C') THEN 1
+    WHEN FILA IN ('002C') THEN 2
+    WHEN FILA IN ('007C') THEN 3
+    WHEN FILA IN ('501C') THEN 1
+    WHEN FILA IN ('502C') THEN 2
+    WHEN FILA IN ('507C') THEN 3
+    WHEN FILA IN ('001X') THEN 1
+    WHEN FILA IN ('002X') THEN 2
+    WHEN FILA IN ('007X') THEN 3
+    WHEN FILA IN ('501X') THEN 1
+    WHEN FILA IN ('502X') THEN 2
+    WHEN FILA IN ('507X') THEN 3
+    WHEN FILA IN ('001Y') THEN 1
+    WHEN FILA IN ('002Y') THEN 2
+    WHEN FILA IN ('007Y') THEN 3
+    WHEN FILA IN ('901Y') THEN 1
+    WHEN FILA IN ('902Y') THEN 2
+    WHEN FILA IN ('907Y') THEN 3
+    WHEN FILA IN ('001P') THEN 1
+    WHEN FILA IN ('002P') THEN 2
+    WHEN FILA IN ('007P') THEN 3
+    WHEN FILA IN ('901P') THEN 1
+    WHEN FILA IN ('902P') THEN 2
+    WHEN FILA IN ('907P') THEN 3
+    WHEN FILA IN ('WEB1') THEN 1
+    WHEN FILA IN ('WEB2') THEN 1
+    WHEN FILA IN ('WEB7') THEN 3
+    WHEN FILA IN ('102E') THEN 1
+    WHEN FILA IN ('102P') THEN 2
+    WHEN FILA IN ('102S') THEN 3
+    WHEN FILA IN ('102Y') THEN 4
+    WHEN FILA IN ('102O') THEN 5
+    WHEN FILA IN ('304E') THEN 1
+    WHEN FILA IN ('304P') THEN 2
+    WHEN FILA IN ('304S') THEN 3
+    WHEN FILA IN ('304Y') THEN 4
+    WHEN FILA IN ('304O') THEN 5
+    WHEN FILA IN ('089E') THEN 1
+    WHEN FILA IN ('089P') THEN 2
+    WHEN FILA IN ('089S') THEN 3
+    WHEN FILA IN ('089Y') THEN 4
+    WHEN FILA IN ('089O') THEN 5
+    WHEN FILA IN ('468E') THEN 1
+    WHEN FILA IN ('468P') THEN 2
+    WHEN FILA IN ('468S') THEN 3
+    WHEN FILA IN ('468Y') THEN 4
+    WHEN FILA IN ('468O') THEN 5
+    WHEN FILA IN ('031E') THEN 1
+    WHEN FILA IN ('031P') THEN 2
+    WHEN FILA IN ('031S') THEN 3
+    WHEN FILA IN ('031Y') THEN 4
+    WHEN FILA IN ('031O') THEN 5
+    WHEN FILA IN ('048E') THEN 1
+    WHEN FILA IN ('048P') THEN 2
+    WHEN FILA IN ('048S') THEN 3
+    WHEN FILA IN ('048Y') THEN 4
+    WHEN FILA IN ('048O') THEN 5
+    WHEN FILA IN ('017E') THEN 1
+    WHEN FILA IN ('017P') THEN 2
+    WHEN FILA IN ('017S') THEN 3
+    WHEN FILA IN ('017Y') THEN 4
+    WHEN FILA IN ('017O') THEN 5
+    WHEN FILA IN ('065E') THEN 1
+    WHEN FILA IN ('065P') THEN 2
+    WHEN FILA IN ('065S') THEN 3
+    WHEN FILA IN ('065Y') THEN 4
+    WHEN FILA IN ('065O') THEN 5
+    WHEN FILA IN ('074E') THEN 1
+    WHEN FILA IN ('074P') THEN 2
+    WHEN FILA IN ('074S') THEN 3
+    WHEN FILA IN ('074Y') THEN 4
+    WHEN FILA IN ('074O') THEN 5
+    WHEN FILA IN ('043E') THEN 1
+    WHEN FILA IN ('043P') THEN 2
+    WHEN FILA IN ('043S') THEN 3
+    WHEN FILA IN ('043Y') THEN 4
+    WHEN FILA IN ('043O') THEN 5
+    WHEN FILA IN ('169E') THEN 1
+    WHEN FILA IN ('169P') THEN 2
+    WHEN FILA IN ('169S') THEN 3
+    WHEN FILA IN ('169Y') THEN 4
+    WHEN FILA IN ('169O') THEN 5
+    WHEN FILA IN ('021E') THEN 1
+    WHEN FILA IN ('021P') THEN 2
+    WHEN FILA IN ('021S') THEN 3
+    WHEN FILA IN ('021Y') THEN 4
+    WHEN FILA IN ('021O') THEN 5
+    WHEN FILA IN ('027E') THEN 1
+    WHEN FILA IN ('027P') THEN 2
+    WHEN FILA IN ('027S') THEN 3
+    WHEN FILA IN ('027Y') THEN 4
+    WHEN FILA IN ('027O') THEN 5
+    WHEN FILA IN ('058E') THEN 1
+    WHEN FILA IN ('058P') THEN 2
+    WHEN FILA IN ('058S') THEN 3
+    WHEN FILA IN ('058Y') THEN 4
+    WHEN FILA IN ('058O') THEN 5
+    WHEN FILA IN ('303E') THEN 1
+    WHEN FILA IN ('303P') THEN 2
+    WHEN FILA IN ('303S') THEN 3
+    WHEN FILA IN ('303Y') THEN 4
+    WHEN FILA IN ('303O') THEN 5
+    WHEN FILA IN ('192E') THEN 1
+    WHEN FILA IN ('192P') THEN 2
+    WHEN FILA IN ('192S') THEN 3
+    WHEN FILA IN ('192Y') THEN 4
+    WHEN FILA IN ('192O') THEN 5
+    WHEN FILA IN ('077E') THEN 1
+    WHEN FILA IN ('077P') THEN 2
+    WHEN FILA IN ('077S') THEN 3
+    WHEN FILA IN ('077Y') THEN 4
+    WHEN FILA IN ('077O') THEN 5
+    WHEN FILA IN ('471E') THEN 1
+    WHEN FILA IN ('471P') THEN 2
+    WHEN FILA IN ('471S') THEN 3
+    WHEN FILA IN ('471Y') THEN 4
+    WHEN FILA IN ('471O') THEN 5
+    WHEN FILA IN ('057E') THEN 1
+    WHEN FILA IN ('057P') THEN 2
+    WHEN FILA IN ('057S') THEN 3
+    WHEN FILA IN ('057Y') THEN 4
+    WHEN FILA IN ('057O') THEN 5
+    WHEN FILA IN ('036E') THEN 1
+    WHEN FILA IN ('036P') THEN 2
+    WHEN FILA IN ('036S') THEN 3
+    WHEN FILA IN ('036Y') THEN 4
+    WHEN FILA IN ('036O') THEN 5
+    WHEN FILA IN ('054E') THEN 1
+    WHEN FILA IN ('054P') THEN 2
+    WHEN FILA IN ('054S') THEN 3
+    WHEN FILA IN ('054Y') THEN 4
+    WHEN FILA IN ('054O') THEN 5
+    WHEN FILA IN ('028E') THEN 1
+    WHEN FILA IN ('028P') THEN 2
+    WHEN FILA IN ('028S') THEN 3
+    WHEN FILA IN ('028Y') THEN 4
+    WHEN FILA IN ('028O') THEN 5
+    WHEN FILA IN ('010E') THEN 1
+    WHEN FILA IN ('010P') THEN 2
+    WHEN FILA IN ('010S') THEN 3
+    WHEN FILA IN ('010Y') THEN 4
+    WHEN FILA IN ('010O') THEN 5
+    WHEN FILA IN ('127E') THEN 1
+    WHEN FILA IN ('127P') THEN 2
+    WHEN FILA IN ('127S') THEN 3
+    WHEN FILA IN ('127Y') THEN 4
+    WHEN FILA IN ('127O') THEN 5
+    WHEN FILA IN ('178E') THEN 1
+    WHEN FILA IN ('178P') THEN 2
+    WHEN FILA IN ('178S') THEN 3
+    WHEN FILA IN ('178Y') THEN 4
+    WHEN FILA IN ('178O') THEN 5
+    WHEN FILA IN ('105E') THEN 1
+    WHEN FILA IN ('105P') THEN 2
+    WHEN FILA IN ('105S') THEN 3
+    WHEN FILA IN ('105Y') THEN 4
+    WHEN FILA IN ('105O') THEN 5
+    WHEN FILA IN ('084E') THEN 1
+    WHEN FILA IN ('084P') THEN 2
+    WHEN FILA IN ('084S') THEN 3
+    WHEN FILA IN ('084Y') THEN 4
+    WHEN FILA IN ('084O') THEN 5
+    WHEN FILA IN ('051E') THEN 1
+    WHEN FILA IN ('051P') THEN 2
+    WHEN FILA IN ('051S') THEN 3
+    WHEN FILA IN ('051Y') THEN 4
+    WHEN FILA IN ('051O') THEN 5
+    WHEN FILA IN ('454E') THEN 1
+    WHEN FILA IN ('454P') THEN 2
+    WHEN FILA IN ('454S') THEN 3
+    WHEN FILA IN ('454Y') THEN 4
+    WHEN FILA IN ('454O') THEN 5
+    WHEN FILA IN ('047E') THEN 1
+    WHEN FILA IN ('047P') THEN 2
+    WHEN FILA IN ('047S') THEN 3
+    WHEN FILA IN ('047Y') THEN 4
+    WHEN FILA IN ('047O') THEN 5
+    WHEN FILA IN ('071E') THEN 1
+    WHEN FILA IN ('071P') THEN 2
+    WHEN FILA IN ('071S') THEN 3
+    WHEN FILA IN ('071Y') THEN 4
+    WHEN FILA IN ('071O') THEN 5
+    WHEN FILA IN ('062E') THEN 1
+    WHEN FILA IN ('062P') THEN 2
+    WHEN FILA IN ('062S') THEN 3
+    WHEN FILA IN ('062Y') THEN 4
+    WHEN FILA IN ('062O') THEN 5
+    WHEN FILA IN ('044E') THEN 1
+    WHEN FILA IN ('044P') THEN 2
+    WHEN FILA IN ('044S') THEN 3
+    WHEN FILA IN ('044Y') THEN 4
+    WHEN FILA IN ('044O') THEN 5
+    WHEN FILA IN ('194E') THEN 1
+    WHEN FILA IN ('194P') THEN 2
+    WHEN FILA IN ('194S') THEN 3
+    WHEN FILA IN ('194Y') THEN 4
+    WHEN FILA IN ('194O') THEN 5
+    WHEN FILA IN ('311E') THEN 1
+    WHEN FILA IN ('311P') THEN 2
+    WHEN FILA IN ('311S') THEN 3
+    WHEN FILA IN ('311Y') THEN 4
+    WHEN FILA IN ('311O') THEN 5
+    WHEN FILA IN ('302E') THEN 1
+    WHEN FILA IN ('302P') THEN 2
+    WHEN FILA IN ('302S') THEN 3
+    WHEN FILA IN ('302Y') THEN 4
+    WHEN FILA IN ('302O') THEN 5
+    WHEN FILA IN ('141E') THEN 1
+    WHEN FILA IN ('141P') THEN 2
+    WHEN FILA IN ('141S') THEN 3
+    WHEN FILA IN ('141Y') THEN 4
+    WHEN FILA IN ('141O') THEN 5
+    WHEN FILA IN ('075E') THEN 1
+    WHEN FILA IN ('075P') THEN 2
+    WHEN FILA IN ('075S') THEN 3
+    WHEN FILA IN ('075Y') THEN 4
+    WHEN FILA IN ('075O') THEN 5
+    WHEN FILA IN ('079E') THEN 1
+    WHEN FILA IN ('079P') THEN 2
+    WHEN FILA IN ('079S') THEN 3
+    WHEN FILA IN ('079Y') THEN 4
+    WHEN FILA IN ('079O') THEN 5
+    WHEN FILA IN ('126E') THEN 1
+    WHEN FILA IN ('126P') THEN 2
+    WHEN FILA IN ('126S') THEN 3
+    WHEN FILA IN ('126Y') THEN 4
+    WHEN FILA IN ('126O') THEN 5
+    WHEN FILA IN ('472E') THEN 1
+    WHEN FILA IN ('472P') THEN 2
+    WHEN FILA IN ('472S') THEN 3
+    WHEN FILA IN ('472Y') THEN 4
+    WHEN FILA IN ('472O') THEN 5
+    WHEN FILA IN ('046E') THEN 1
+    WHEN FILA IN ('046P') THEN 2
+    WHEN FILA IN ('046S') THEN 3
+    WHEN FILA IN ('046Y') THEN 4
+    WHEN FILA IN ('046O') THEN 5
+    WHEN FILA IN ('310E') THEN 1
+    WHEN FILA IN ('310P') THEN 2
+    WHEN FILA IN ('310S') THEN 3
+    WHEN FILA IN ('310Y') THEN 4
+    WHEN FILA IN ('310O') THEN 5
+    WHEN FILA IN ('305E') THEN 1
+    WHEN FILA IN ('305P') THEN 2
+    WHEN FILA IN ('305S') THEN 3
+    WHEN FILA IN ('305Y') THEN 4
+    WHEN FILA IN ('305O') THEN 5
+    WHEN FILA IN ('055E') THEN 1
+    WHEN FILA IN ('055P') THEN 2
+    WHEN FILA IN ('055S') THEN 3
+    WHEN FILA IN ('055Y') THEN 4
+    WHEN FILA IN ('055O') THEN 5
+    WHEN FILA IN ('076E') THEN 1
+    WHEN FILA IN ('076P') THEN 2
+    WHEN FILA IN ('076S') THEN 3
+    WHEN FILA IN ('076Y') THEN 4
+    WHEN FILA IN ('076O') THEN 5
+    WHEN FILA IN ('037E') THEN 1
+    WHEN FILA IN ('037P') THEN 2
+    WHEN FILA IN ('037S') THEN 3
+    WHEN FILA IN ('037Y') THEN 4
+    WHEN FILA IN ('037O') THEN 5
+    WHEN FILA IN ('307E') THEN 1
+    WHEN FILA IN ('307P') THEN 2
+    WHEN FILA IN ('307S') THEN 3
+    WHEN FILA IN ('307Y') THEN 4
+    WHEN FILA IN ('307O') THEN 5
+    WHEN FILA IN ('041E') THEN 1
+    WHEN FILA IN ('041P') THEN 2
+    WHEN FILA IN ('041S') THEN 3
+    WHEN FILA IN ('041Y') THEN 4
+    WHEN FILA IN ('041O') THEN 5
+    WHEN FILA IN ('019E') THEN 1
+    WHEN FILA IN ('019P') THEN 2
+    WHEN FILA IN ('019S') THEN 3
+    WHEN FILA IN ('019Y') THEN 4
+    WHEN FILA IN ('019O') THEN 5
+    WHEN FILA IN ('388E') THEN 1
+    WHEN FILA IN ('388P') THEN 2
+    WHEN FILA IN ('388S') THEN 3
+    WHEN FILA IN ('388Y') THEN 4
+    WHEN FILA IN ('388O') THEN 5
+    WHEN FILA IN ('014E') THEN 1
+    WHEN FILA IN ('014P') THEN 2
+    WHEN FILA IN ('014S') THEN 3
+    WHEN FILA IN ('014Y') THEN 4
+    WHEN FILA IN ('014O') THEN 5
+    WHEN FILA IN ('042E') THEN 1
+    WHEN FILA IN ('042P') THEN 2
+    WHEN FILA IN ('042S') THEN 3
+    WHEN FILA IN ('042Y') THEN 5
+    WHEN FILA IN ('042O') THEN 5
+    WHEN FILA IN ('035E') THEN 1
+    WHEN FILA IN ('035P') THEN 2
+    WHEN FILA IN ('035S') THEN 3
+    WHEN FILA IN ('035Y') THEN 4
+    WHEN FILA IN ('035O') THEN 5
+    WHEN FILA IN ('060E') THEN 1
+    WHEN FILA IN ('060P') THEN 2
+    WHEN FILA IN ('060S') THEN 3
+    WHEN FILA IN ('060Y') THEN 4
+    WHEN FILA IN ('060O') THEN 5
+    WHEN FILA IN ('016E') THEN 1
+    WHEN FILA IN ('016P') THEN 2
+    WHEN FILA IN ('016S') THEN 3
+    WHEN FILA IN ('016Y') THEN 4
+    WHEN FILA IN ('016O') THEN 5
+    WHEN FILA IN ('011E') THEN 1
+    WHEN FILA IN ('011P') THEN 2
+    WHEN FILA IN ('011S') THEN 3
+    WHEN FILA IN ('011Y') THEN 4
+    WHEN FILA IN ('011O') THEN 5
+    WHEN FILA IN ('050E') THEN 1
+    WHEN FILA IN ('050P') THEN 2
+    WHEN FILA IN ('050S') THEN 3
+    WHEN FILA IN ('050Y') THEN 4
+    WHEN FILA IN ('050O') THEN 5
+    WHEN FILA IN ('308E') THEN 1
+    WHEN FILA IN ('308P') THEN 2
+    WHEN FILA IN ('308S') THEN 3
+    WHEN FILA IN ('308Y') THEN 4
+    WHEN FILA IN ('308O') THEN 5
+    WHEN FILA IN ('312E') THEN 1
+    WHEN FILA IN ('312P') THEN 2
+    WHEN FILA IN ('312S') THEN 3
+    WHEN FILA IN ('312Y') THEN 4
+    WHEN FILA IN ('312O') THEN 5
+    WHEN FILA IN ('121E') THEN 1
+    WHEN FILA IN ('121P') THEN 2
+    WHEN FILA IN ('121S') THEN 3
+    WHEN FILA IN ('121Y') THEN 4
+    WHEN FILA IN ('121O') THEN 5
+    WHEN FILA IN ('072E') THEN 1
+    WHEN FILA IN ('072P') THEN 2
+    WHEN FILA IN ('072S') THEN 3
+    WHEN FILA IN ('072Y') THEN 4
+    WHEN FILA IN ('072O') THEN 5
+    WHEN FILA IN ('300E') THEN 1
+    WHEN FILA IN ('300P') THEN 2
+    WHEN FILA IN ('300S') THEN 3
+    WHEN FILA IN ('300Y') THEN 4
+    WHEN FILA IN ('300O') THEN 5
+    WHEN FILA IN ('161E') THEN 1
+    WHEN FILA IN ('161P') THEN 2
+    WHEN FILA IN ('161S') THEN 3
+    WHEN FILA IN ('161Y') THEN 4
+    WHEN FILA IN ('161O') THEN 5
+    WHEN FILA IN ('177E') THEN 1
+    WHEN FILA IN ('177P') THEN 2
+    WHEN FILA IN ('177S') THEN 3
+    WHEN FILA IN ('177Y') THEN 4
+    WHEN FILA IN ('177O') THEN 5
+ELSE 99 END AS SUB_ID
+    
+FROM crp-pro-dwh-semanticagold.MUS_PRO_DWH_VIEWS_ODS.VDIM_NEGFIN_CATALOGO_FILAS)
+)
