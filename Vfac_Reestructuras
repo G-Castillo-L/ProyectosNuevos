@@ -2,32 +2,28 @@ CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_N
 AS 
 
 SELECT A.TIP_INF,
-      ANIOMES_ESTR,
+      ANIO_OBS,
+      MES_OBS,
       ANIOMES_OBS,
+      ANIO_ESTR,
+      MES_ESTR,
+      ANIOMES_ESTR,
       ANTIG_ESTR,
       FLG_30,
       FLG_90,
       CASE WHEN A.CTA_NIV_MOR>=3 THEN "30+" 
       ELSE "REST" END AS FLG_NIV_MOR,
-        CASE
-    WHEN A.CTA_NIV_MOR IN (0, 1) THEN '0.-CTAS_VIG'
-    WHEN A.CTA_NIV_MOR=2 THEN '1.-1-29 DIAS'
-    WHEN A.CTA_NIV_MOR=3 THEN '2.-30_DIAS'
-    WHEN A.CTA_NIV_MOR=4 THEN '3.-60_DIAS'
-    WHEN A.CTA_NIV_MOR=5 THEN '4.-90_DIAS'
-    WHEN A.CTA_NIV_MOR=6 THEN '5.-120_DIAS'
-    WHEN A.CTA_NIV_MOR=7 THEN '6.-150_DIAS'
-    WHEN A.CTA_NIV_MOR=8 THEN '7.-180_DIAS'
-  ELSE
-  '8.-210_DIAS' END
-  AS RANG_NIV_MOR,
-CASE WHEN A.CTA_EDO_CVE NOT IN ('T','9','8','P','Z') THEN 1 
-    ELSE 0 END AS ACTIVA,
-       A.CCR_CVE_BLQ_DOS,
-CASE 
+
+    A.RANG_NIV_MOR,
+
+    D.ID AS ID_RANG_LIM_CRED,
+
+    A.CCR_CVE_BLQ_DOS,
+    CASE 
         WHEN A.FLG_DIG = 0 THEN 2 
-        ELSE 1 END FLG_DIG,
-        CASE 
+        ELSE 1 
+    END FLG_DIG,
+    CASE 
         WHEN A.ANTIG_ESTR = 0 THEN 1 
         ELSE 0 
     END AS FLG_INSCRITA,
@@ -41,10 +37,12 @@ CASE
         WHEN A.MOBS_ALT_ESTR >= 61 THEN 7
         ELSE 8
     END AS ID_RANG_MOB_PLAN,
-CASE WHEN C.ID_SEGMENTO_CLIENTE IS NULL THEN 30
-    ELSE C.ID_SEGMENTO_CLIENTE END AS ID_SEGMENTO_CLIENTE,
+    CASE 
+        WHEN C.ID_SEGMENTO_CLIENTE IS NULL THEN 30
+        ELSE C.ID_SEGMENTO_CLIENTE 
+    END AS ID_SEGMENTO_CLIENTE,
 
- CASE 
+    CASE 
         WHEN A.CTA_EDO_CVE NOT IN ('T', '9', '8', 'P', 'Z', 'Q') THEN 1 
         ELSE 0 
     END AS FLG_ACT,
@@ -79,18 +77,20 @@ CASE WHEN C.ID_SEGMENTO_CLIENTE IS NULL THEN 30
           WHEN A.PLAZO<=24 THEN "22-24"
           WHEN A.PLAZO<=33 THEN "25-33"
           WHEN A.PLAZO<=36 THEN "34-36"
-          ELSE "36+" END AS PLAZO,
+          ELSE "36+" END AS RANG_PLAZO,
+          
     
-    CASE WHEN A.RANG_NIV_MOR= "0.-CTAS_VIG" THEN " CORRIENTE"
-    WHEN A.RANG_NIV_MOR= "1.-1-29 DIAS" THEN "2(1-29 D)"
-    WHEN A.RANG_NIV_MOR= "2.-30_DIAS" THEN "3(30-59 D)"
-    WHEN A.RANG_NIV_MOR= "3.-60_DIAS" THEN "4(60-89 D)"
-    WHEN A.RANG_NIV_MOR= "4.-90_DIAS" THEN "5(90-119 D)"
-    WHEN A.RANG_NIV_MOR= "5.-120_DIAS" THEN "6(120-149 D)"
-    WHEN A.RANG_NIV_MOR= "6.-150_DIAS" THEN "7(150-179 D)"
-    WHEN A.RANG_NIV_MOR= "7.-180_DIAS" THEN "8(180-209 D)"
-    WHEN A.RANG_NIV_MOR= "8.-210_DIAS" THEN "9(+210 D)"
-    ELSE"" END AS CD_MOROSIDAD,
+    CASE 
+          WHEN A.RANG_NIV_MOR= "0.-CTAS_VIG" THEN " CORRIENTE"
+          WHEN A.RANG_NIV_MOR= "1.-1-29 DIAS" THEN "2(1-29 D)"
+          WHEN A.RANG_NIV_MOR= "2.-30_DIAS" THEN "3(30-59 D)"
+          WHEN A.RANG_NIV_MOR= "3.-60_DIAS" THEN "4(60-89 D)"
+          WHEN A.RANG_NIV_MOR= "4.-90_DIAS" THEN "5(90-119 D)"
+          WHEN A.RANG_NIV_MOR= "5.-120_DIAS" THEN "6(120-149 D)"
+          WHEN A.RANG_NIV_MOR= "6.-150_DIAS" THEN "7(150-179 D)"
+          WHEN A.RANG_NIV_MOR= "7.-180_DIAS" THEN "8(180-209 D)"
+          WHEN A.RANG_NIV_MOR= "8.-210_DIAS" THEN "9(+210 D)"
+          ELSE"" END AS CD_MOROSIDAD,
   
      CASE WHEN A.RANG_MOBS="A.0M-6M" THEN 1
           WHEN A.RANG_MOBS="B.7M-12M" THEN 2
@@ -111,38 +111,45 @@ CASE WHEN C.ID_SEGMENTO_CLIENTE IS NULL THEN 30
         END ID_RANG_EDAD,
 --DATE_DIFF(DATE(ANIO_OBS,MES_OBS,1),CTE_FCH_NAC, YEAR) EDAD,
 
- CASE 
-	WHEN CVE_ZNA ="1" THEN 1.1
-  WHEN CVE_ZNA ="2" THEN 2.1
-  WHEN CVE_ZNA ="3" THEN 3.1
-  WHEN CVE_ZNA ="4" THEN 4.1
-  WHEN CVE_ZNA ="5" THEN 5.1
-  WHEN CVE_ZNA ="6" THEN 6.1
-  WHEN CVE_ZNA ="7" THEN 7.1
-  WHEN CVE_ZNA ="8" THEN 8.1
-  WHEN CVE_ZNA ="9" THEN 9.1
-  WHEN CVE_ZNA ="OTRO" THEN 11.1
-  WHEN CVE_ZNA ="VAD" THEN 10.1
---   WHEN CVE_ZNA ="Metro Sur" THEN 1.1
---   WHEN CVE_ZNA ="Metro Oriente" THEN 2.1
---   WHEN CVE_ZNA ="Metro Norte" THEN 3.1
---   WHEN CVE_ZNA ="Metro Centro" THEN 4.1
---   WHEN CVE_ZNA ="Bajío" THEN 5.1
---   WHEN CVE_ZNA ="Occidente" THEN 6.1
---   WHEN CVE_ZNA ="Pacífico" THEN 7.1
---   WHEN CVE_ZNA ="Centro Norte" THEN 8.1
---   WHEN CVE_ZNA ="Norte" THEN 9.1
---   WHEN CVE_ZNA ="Centro Sur" THEN 10.1
--- 	WHEN CVE_ZNA ="Golfo" THEN 11.1
---   WHEN CVE_ZNA ="Sur" THEN 12.1
---   WHEN CVE_ZNA ="VAD" THEN 14.1
---   WHEN CVE_ZNA ="Omnicanal" THEN 14.1
--- ELSE 13.1
-  END CVE_ZNA,
+        CASE 
+        WHEN CVE_ZNA ="1" THEN 1.1
+        WHEN CVE_ZNA ="2" THEN 2.1
+        WHEN CVE_ZNA ="3" THEN 3.1
+        WHEN CVE_ZNA ="4" THEN 4.1
+        WHEN CVE_ZNA ="5" THEN 5.1
+        WHEN CVE_ZNA ="6" THEN 6.1
+        WHEN CVE_ZNA ="7" THEN 7.1
+        WHEN CVE_ZNA ="8" THEN 8.1
+        WHEN CVE_ZNA ="9" THEN 9.1
+        WHEN CVE_ZNA ="OTRO" THEN 11.1
+        WHEN CVE_ZNA ="VAD" THEN 10.1
+      --   WHEN CVE_ZNA ="Metro Sur" THEN 1.1
+      --   WHEN CVE_ZNA ="Metro Oriente" THEN 2.1
+      --   WHEN CVE_ZNA ="Metro Norte" THEN 3.1
+      --   WHEN CVE_ZNA ="Metro Centro" THEN 4.1
+      --   WHEN CVE_ZNA ="Bajío" THEN 5.1
+      --   WHEN CVE_ZNA ="Occidente" THEN 6.1
+      --   WHEN CVE_ZNA ="Pacífico" THEN 7.1
+      --   WHEN CVE_ZNA ="Centro Norte" THEN 8.1
+      --   WHEN CVE_ZNA ="Norte" THEN 9.1
+      --   WHEN CVE_ZNA ="Centro Sur" THEN 10.1
+      -- 	WHEN CVE_ZNA ="Golfo" THEN 11.1
+      --   WHEN CVE_ZNA ="Sur" THEN 12.1
+      --   WHEN CVE_ZNA ="VAD" THEN 14.1
+      --   WHEN CVE_ZNA ="Omnicanal" THEN 14.1
+      -- ELSE 13.1
+        END CVE_ZNA,
 
-CTE_GEN,
-   CASE WHEN A.CTA_NIV_MOR <5 THEN "0-89 Días"
-   ELSE "90+" END NIV_MOR_90,
+    CTE_GEN,
+   CASE 
+      WHEN A.CTA_NIV_MOR <5 THEN "0-89 Días"
+      ELSE "90+" END NIV_MOR_90,
+      PLAZO  AS ID_PLAZO,
+      NIV_RIESGO AS RIESGO,
+      
+      NUM_REEST,
+      TASA,
+      "0" PLAN,
 
 CAST(COUNT(A.CTA_ACT) AS FLOAT64) AS CUENTAS,
     CAST(SUM(A.CTA_SDO_ACT) / 1000000 AS FLOAT64) AS CTA_SDO_ACT,
@@ -215,12 +222,15 @@ LEFT JOIN crp-pro-cx-semantica.mus_pro_shared_views.VDIM_SGMTOS_RFM_HIST_AANF AS
     AND A.MES_ESTR = F.MES
 
 WHERE ANIOMES_OBS>=202101 
-GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32
 
     ;
---);
 
--- CREATE or REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_REEST_VPBIM1
--- AS
--- SELECT *
--- FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_REEST_VPBIM1
+    --);
+
+CREATE or REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_REEST_VPBIM1
+AS
+SELECT *
+FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_REEST_VPBIM1
+
+
