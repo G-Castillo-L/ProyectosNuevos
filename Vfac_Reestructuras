@@ -19,6 +19,8 @@ SELECT A.TIP_INF,
     D.ID AS ID_RANG_LIM_CRED,
 
     A.CCR_CVE_BLQ_DOS,
+    CASE WHEN A.CCR_CVE_BLQ_DOS IN ("M","R") THEN A.CCR_CVE_BLQ_DOS
+    ELSE "" END as BLOQUEO,
     CASE 
         WHEN A.FLG_DIG = 0 THEN 2 
         ELSE 1 
@@ -222,15 +224,13 @@ LEFT JOIN crp-pro-cx-semantica.mus_pro_shared_views.VDIM_SGMTOS_RFM_HIST_AANF AS
     AND A.MES_ESTR = F.MES
 
 WHERE ANIOMES_OBS>=202201 
-GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33
 
     ;
 
     --);
 
-CREATE or REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_REEST_VPBIM1
-AS
-SELECT *
-FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_REEST_VPBIM1
-
-
+-- CREATE or REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_REEST_VPBIM1
+-- AS
+-- SELECT *
+-- FROM crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_REEST_VPBIM1
