@@ -1,0 +1,1028 @@
+
+
+CREATE OR REPLACE TABLE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTA_RNG_EDAD_CTE_CC`
+AS
+
+
+
+WITH CTE_UNICO AS
+(
+    SELECT CTA_CVE, A.CTE_CVE_UNICO,
+        row_number() over (partition by A.CTA_CVE order by A.CTA_CVE) AS REGISTRO
+    FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA_TRJ` AS A
+)
+
+
+
+SELECT NUM_PRODUCTOS,
+       PRODUCTOS,
+       FLG_30,
+       FLG_90,
+       ANIO,
+       MES,
+       CASE WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) < 30 THEN '1.- <30'
+            WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) BETWEEN 30 AND 45 THEN '2.-30 A 45'
+            WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) > 45 THEN '3.-45+'
+       ELSE '' END AS RANG_EDAD,
+       ANIO_ALTA,
+       
+       CAST(SUM(CUENTA) AS FLOAT64) AS CUENTA,
+       CAST(SUM(SDO_ACT) AS FLOAT64) AS SDO_ACT,
+       CAST(SUM(LC_ACT) AS FLOAT64) AS LC_ACT,
+       ((ANIO*100)+MES) AS ANIOMES,
+     --  VAL_MAX_NIV_MOR
+
+FROM (SELECT
+            /* CLIENTE ÚNICO */
+
+            CASE WHEN PRODUCTOS > 5 THEN 6 ELSE PRODUCTOS END AS NUM_PRODUCTOS,
+
+       CASE WHEN PRODUCTOS=1 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 AND CC=0 THEN 'Dilisa'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=0 THEN 'Lpc'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=0 THEN 'SBB TD'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=0 THEN 'SBB Visa'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=0 AND CC=1 THEN 'SBB CC'
+/* 2 */
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=0 THEN 'Dilisa+Lpc'  
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=0 THEN 'Dilisa+SBB TD'
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=0 THEN 'Dilisa+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 AND CC=1 THEN 'Dilisa+SBB CC'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=0 THEN 'Lpc+SBB TD'  
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=0 THEN 'Lpc+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=1 THEN 'Lpc+SBB CC'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=0 THEN 'SBB TD+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=1 THEN 'SBB TD+SBB CC'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=1 THEN 'SBB Visa +SBB CC'
+            WHEN PRODUCTOS=2 THEN 'Otros'
+/* 3 */
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=0 THEN 'Dilisa+Lpc+SBB TD'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=0 THEN 'Dilisa+Lpc+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=1 THEN 'Dilisa+Lpc+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=0 THEN 'Dilisa+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=1 THEN 'Dilisa+SBB TD+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=1 THEN 'Dilisa+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=0 THEN 'Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=1 THEN 'Lpc+SBB TD+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=1 THEN 'Lpc+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=1 THEN 'SBB TD+SBB Visa+SBB CC'
+
+
+            WHEN PRODUCTOS=3 THEN 'Otros'
+/* 4 */
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=0 THEN 'Dilisa+Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=1 THEN 'Dilisa+Lpc+SBB TD+SBB CC'
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=1 THEN 'Dilisa+Lpc+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=1 THEN 'Dilisa+SBB TD+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=4 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=1 THEN 'Lpc+SBB TD+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=4 THEN 'Otros'
+/* Sin cliente unico */
+            WHEN PRODUCTOS =5 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=1 THEN 'Dilisa+Lpc+SBB TD+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=5 THEN 'Otros'
+            WHEN PRODUCTOS >5 OR PRODUCTOS= 0 OR PRODUCTOS IS NULL THEN 'Otros'
+        END AS PRODUCTOS,
+                    CASE WHEN B.NIV_MOR IN (3,4,5,6,7,8,9)  THEN '30+' ELSE 'Rest' END AS FLG_30,
+                    CASE WHEN B.NIV_MOR IN (5,6,7,8,9) THEN '90+' ELSE 'Rest' END AS FLG_90,
+                   
+
+                    A.ANIO,
+                    A.MES, 
+                    CASE WHEN EXTRACT(YEAR FROM B.CTA_FCH_ALTA)<=2009 THEN 2009 ELSE EXTRACT(YEAR FROM B.CTA_FCH_ALTA) END AS ANIO_ALTA,
+                    -- COUNT(DISTINCT IFNULL(A.CTE_CVE_UNICO,0) ) AS CTE_UNICO,
+                    CASE WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)<=0 THEN 0
+                         WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 01 AND 10 AND SUBSTR(C.CTE_CVE_RFC,1,1) 
+                         NOT IN ('0','1','2','3','4','5','6','7','8','9') THEN A.ANIO-(SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)+2000)
+                         WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 21 AND 99 AND SUBSTR(C.CTE_CVE_RFC,1,1) 
+                         NOT IN ('0','1','2','3','4','5','6','7','8','9') THEN A.ANIO-(SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)+1900)
+                    ELSE 00 END AS EDAD,
+                    C.CTE_EDA,
+                   -- VAL_MAX_NIV_MOR,
+                    COUNT(B.CTA_CVE) AS CUENTA,
+                    SUM(SDO_ACT) AS SDO_ACT,
+                    SUM(LC_ACT) AS LC_ACT
+            FROM (
+                        SELECT IFNULL(B.CTE_CVE_UNICO,0) AS CTE_CVE_UNICO, ANIO, MES,                             
+                            SUM(CASE WHEN ETQ="LPC" THEN 1 ELSE 0 END) AS LPC,
+                            SUM(CASE WHEN ETQ="DILISA" THEN 1 ELSE 0 END) AS DILISA,
+                            SUM(CASE WHEN ETQ="VISA" THEN 1 ELSE 0 END) AS VISA,
+                            SUM(CASE WHEN ETQ="DEP" THEN 1 ELSE 0 END) AS SBB,
+                            SUM(CASE WHEN ETQ="CC" THEN 1 ELSE 0 END) AS CC,
+                            SUM(PRODUCTO) AS PRODUCTOS,
+                            -- MAX(A.CTA_NIV_MOR_1) VAL_MAX_NIV_MOR,  
+                           
+                        FROM (
+                                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, A.PRODUCTO, A.ETQ, --CTA_NIV_MOR_1
+                                FROM (
+
+                                        SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 'CC' AS ETQ--, CTA_NIV_MOR AS CTA_NIV_MOR_1
+                                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                        WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2020
+                                        AND TIP_INF IN (220,230) --( (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf=220 )
+
+                                        UNION ALL
+
+                                        SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 
+                                              CASE WHEN TIP_INF=100 THEN 'LPC'
+                                                    WHEN TIP_INF=110 THEN 'DILISA'
+                                                    WHEN TIP_INF=210 THEN 'DEP'
+                                                    WHEN TIP_INF=200 THEN 'VISA'
+                                                END AS ETQ--, CTA_NIV_MOR AS CTA_NIV_MOR_1
+                                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                        WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2020
+                                        AND A.TIP_INF IN (100,110,200,210)
+                                    ) AS A
+                               -- WHERE A.ETQ <>'CC'
+                            ) AS A
+                        LEFT JOIN (  
+                                        SELECT CTA_CVE, CTE_CVE_UNICO AS CTE_CVE_UNICO
+                                        FROM CTE_UNICO 
+                                        WHERE REGISTRO=1
+                                ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+                        GROUP BY 1,2,3
+                ) AS A
+            LEFT JOIN (   /* COMPORTAMIENTO */
+                    
+                            SELECT A.CTA_CVE, IFNULL(B.CTE_CVE_UNICO,0) AS CTE_CVE_UNICO, A.MES, A.ANIO, E.CTA_FCH_ALTA,
+                                A.CTA_NIV_MOR AS NIV_MOR, A.CTA_SDO_ACT AS SDO_ACT, A.CTA_IMP_LIM_CRD AS LC_ACT
+                            FROM (
+                                    SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, A.PRODUCTO,
+                                          A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD
+                                    FROM (
+                                            SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO,
+                                                  A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD, 
+                                                  CASE WHEN TIP_INF=100 THEN 'LPC'
+                                                    WHEN TIP_INF=110 THEN 'DILISA'
+                                                    WHEN TIP_INF=210 THEN 'DEP'
+                                                    WHEN TIP_INF =200 THEN 'VISA'
+                                                 END AS ETQ
+                                            FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                            WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND ANIO>=2020
+                                            AND A.TIP_INF IN (110,100,210,200)
+
+                                            UNION ALL
+
+                                            SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO,
+                                                  A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD, 'CC' AS ETQ
+                                            FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                            WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2020
+                                            AND tip_inf IN (220,230) 
+                                        ) AS A
+                                   -- WHERE A.ETQ <>'CC'
+                                ) AS A
+                            LEFT JOIN (  
+                                            SELECT CTA_CVE, CTE_CVE_UNICO
+                                            FROM CTE_UNICO 
+                                            WHERE REGISTRO=1
+                                    ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+                            LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA` AS E ON (A.CTA_CVE=E.CTA_CVE)
+
+                    ) AS B ON (A.CTE_CVE_UNICO=B.CTE_CVE_UNICO AND A.MES=B.MES AND A.ANIO=B.ANIO)
+            INNER JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON (B.CTA_CVE=C.CTA_CVE AND C.SYS_FTE=12)
+            GROUP BY 1,2,3,4,5,6,7,8,9
+   )
+WHERE ((ANIO*100)+MES) >= 202101
+---((ANIO*100)+MES) >= ((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1)
+GROUP BY 1,2,3,4,5,6,7,8
+ORDER BY 1,12
+
+;
+-- -- ---Vista
+-- CREATE OR REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_CTA_RNG_EDAD_CTE_CC
+-- AS SELECT *
+-- FROM `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTA_RNG_EDAD_CTE_CC`
+
+
+
+
+
+
+CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_TRJ_CC 
+AS 
+
+WITH CTE_UNICO AS
+    (
+        SELECT CTA_CVE, A.CTE_CVE_UNICO,
+            row_number() over (partition by A.CTA_CVE order by A.CTA_CVE) AS REGISTRO
+        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA_TRJ` AS A
+    )
+
+
+SELECT CASE WHEN PRODUCTOS > 5 THEN 6 ELSE PRODUCTOS END AS NUM_PRODUCTOS,
+
+       CASE WHEN PRODUCTOS=1 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 AND CC=0 THEN 'Dilisa'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=0 THEN 'Lpc'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=0 THEN 'SBB TD'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=0 THEN 'SBB Visa'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=0 AND CC=1 THEN 'SBB CC'
+/* 2 */
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=0 THEN 'Dilisa+Lpc'  
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=0 THEN 'Dilisa+SBB TD'
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=0 THEN 'Dilisa+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 AND CC=1 THEN 'Dilisa+SBB CC'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=0 THEN 'Lpc+SBB TD'  
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=0 THEN 'Lpc+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=1 THEN 'Lpc+SBB CC'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=0 THEN 'SBB TD+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=1 THEN 'SBB TD+SBB CC'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=1 THEN 'SBB Visa +SBB CC'
+            WHEN PRODUCTOS=2 THEN 'Otros'
+/* 3 */
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=0 THEN 'Dilisa+Lpc+SBB TD'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=0 THEN 'Dilisa+Lpc+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 AND CC=1 THEN 'Dilisa+Lpc+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=0 THEN 'Dilisa+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 AND CC=1 THEN 'Dilisa+SBB TD+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 AND CC=1 THEN 'Dilisa+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=0 THEN 'Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=1 THEN 'Lpc+SBB TD+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=1 THEN 'Lpc+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=1 THEN 'SBB TD+SBB Visa+SBB CC'
+
+            WHEN PRODUCTOS=3 THEN 'Otros'
+/* 4 */
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=0 THEN 'Dilisa+Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 AND CC=1 THEN 'Dilisa+Lpc+SBB TD+SBB CC'
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 AND CC=1 THEN 'Dilisa+Lpc+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 AND CC=1 THEN 'Dilisa+SBB TD+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=4 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=1 THEN 'Lpc+SBB TD+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=4 THEN 'Otros'
+/* Sin cliente unico */
+            WHEN PRODUCTOS =5 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 AND CC=1 THEN 'Dilisa+Lpc+SBB TD+SBB Visa+SBB CC'
+            WHEN PRODUCTOS=5 THEN 'Otros'
+            WHEN PRODUCTOS >5 OR PRODUCTOS= 0 OR PRODUCTOS IS NULL THEN 'Otros'
+        END AS PRODUCTOS,
+        ANIO,
+        MES,
+        ((ANIO*100)+MES) AS ANIOMES,
+        CASE 
+        WHEN (CASE WHEN (EDAD >=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 
+        THEN CTE_EDA ELSE EDAD END) < 30 THEN '1.- <30'
+        WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 
+        THEN CTE_EDA ELSE EDAD END) BETWEEN 30 AND 45 THEN '2.-30 A 45'
+        WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 
+        THEN CTE_EDA ELSE EDAD END) > 45 THEN '3.-45+'
+        ELSE '' END AS RANG_EDAD,
+        COUNT(DISTINCT CTE_CVE_UNICO) AS CLIENTE
+        --,TIP_INF
+FROM (
+        SELECT 
+        DISTINCT B.CTE_CVE_UNICO AS CTE_CVE_UNICO, 
+        ANIO, 
+        MES,
+        MAX(CASE WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)<=0 THEN 0
+        WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 01 AND 10 AND SUBSTR(A.CTE_CVE_RFC,1,1) 
+        NOT IN ('0','1','2','3','4','5','6','7','8','9') 
+        THEN A.ANIO-(SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)+2000)
+        WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 21 AND 99 AND SUBSTR(A.CTE_CVE_RFC,1,1) 
+        NOT IN ('0','1','2','3','4','5','6','7','8','9') 
+        THEN A.ANIO-(SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)+1900)
+        ELSE 00 END) AS EDAD, 
+        MAX(CTE_EDA) AS CTE_EDA,                             
+        SUM(CASE WHEN TIP_INF=100 THEN 1 ELSE 0 END) AS LPC,
+        SUM(CASE WHEN TIP_INF=110 THEN 1 ELSE 0 END) AS DILISA,
+        SUM(CASE WHEN TIP_INF=200 THEN 1 ELSE 0 END) AS VISA,
+        SUM(CASE WHEN TIP_INF=210 THEN 1 ELSE 0 END) AS SBB,
+        SUM(CASE WHEN TIP_INF=220 THEN 1 ELSE 0 END) AS CC,
+
+
+        SUM(PRODUCTO) AS PRODUCTOS,
+        --TIP_INF
+        FROM (
+                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 'CC' AS ETQ,
+                 C.CTE_CVE_RFC, C.CTE_EDA
+                FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
+                WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2020
+                AND  tip_inf=220 --(A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR
+
+                UNION ALL
+
+                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 
+                      CASE WHEN TIP_INF=100 THEN 'LPC'
+                            WHEN TIP_INF=110 THEN 'DILISA'
+                            WHEN TIP_INF=210 THEN 'DEP'
+                        ELSE 'VISA' END AS ETQ, C.CTE_CVE_RFC,C.CTE_EDA
+                FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
+                WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2020
+                AND A.TIP_INF IN (100,110,200,210)
+                ) AS A
+        LEFT JOIN (  
+                        SELECT CTA_CVE, CTE_CVE_UNICO AS CTE_CVE_UNICO
+                        FROM CTE_UNICO 
+                        WHERE REGISTRO=1
+                    ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+        --WHERE A.ETQ<>"CC"
+        GROUP BY 1,2,3--,11
+)
+WHERE ((ANIO*100)+MES) >= 202101 
+--=((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1)
+GROUP BY 1,2,3,4,5,6--,8
+ORDER BY 3,4
+
+;
+
+-- --CREAR VISTA
+
+-- Create or replace view crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_CTE_TRJ_CC 
+--  as
+-- select * from crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_TRJ_CC 
+
+
+
+
+
+#PROCEDURE COMBINACION TARJETAS
+ 
+ CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_UNIC_NIV_MOR
+ AS
+
+/*CREATE OR REPLACE PROCEDURE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.SP_NEGFIN_CTE_UNIC_NIV_MOR` ()
+
+
+BEGIN
+
+DECLARE FCH_EJEC DATE DEFAULT DATE(DATE_ADD(CURRENT_DATE("America/Mexico_City"), Interval -1 DAY)); 
+
+ IF FCH_EJEC = DATE_TRUNC(FCH_EJEC, MONTH) THEN
+ SET FCH_EJEC = DATE_ADD(FCH_EJEC, INTERVAL -1 DAY);END IF;
+
+
+INSERT INTO `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_UNIC_NIV_MOR`
+
+*/
+
+
+
+WITH CTE_UNICO AS
+    (
+        SELECT CTA_CVE, A.CTE_CVE_UNICO,
+            row_number() over (partition by A.CTA_CVE order by A.CTA_CVE) AS REGISTRO
+        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA_TRJ` AS A
+    )
+
+
+
+
+SELECT CASE WHEN PRODUCTOS>4 THEN 5 ELSE PRODUCTOS END AS NUM_PRODUCTOS,
+
+       CASE WHEN PRODUCTOS=1 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 THEN 'Dilisa'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Lpc'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'SBB TD'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'SBB Visa'
+/* 2 */
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Dilisa+Lpc'  
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'Dilisa+SBB TD'
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'Dilisa+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Lpc+SBB TD'  
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Lpc+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'SBB TD+SBB Visa'
+            WHEN PRODUCTOS=2 THEN 'Otros'
+/* 3 */
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Dilisa+Lpc+SBB TD'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Dilisa+Lpc+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'Dilisa+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 THEN 'Otros'
+/* 4 */
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Dilisa+Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=4 THEN 'Otros'
+/* Sin cliente unico */
+            WHEN PRODUCTOS>4 OR PRODUCTOS=0 OR PRODUCTOS IS NULL THEN 'Otros'
+        END AS PRODUCTOS, 
+        ANIO,
+        MES, 
+        ((ANIO*100)+MES) AS ANIOMES,
+        CASE WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) < 30 THEN '1.- <30'
+            WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) BETWEEN 30 AND 45 THEN '2.-30 A 45'
+            WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) > 45 THEN '3.-45+'
+       ELSE '' END AS RANG_EDAD,
+       VAL_MAX_NIV_MOR,--RNG_PTI_TOT,
+        COUNT(DISTINCT CTE_CVE_UNICO) AS CLIENTE,
+
+FROM (
+        SELECT DISTINCT B.CTE_CVE_UNICO AS CTE_CVE_UNICO, ANIO, MES,--RNG_PTI_TOT,
+                MAX(CASE WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)<=0 THEN 0
+                         WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 01 AND 10 AND SUBSTR(A.CTE_CVE_RFC,1,1) NOT IN ('0','1','2','3','4','5','6','7','8','9') THEN A.ANIO-(SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)+2000)
+                         WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 21 AND 99 AND SUBSTR(A.CTE_CVE_RFC,1,1) NOT IN ('0','1','2','3','4','5','6','7','8','9') THEN A.ANIO-(SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)+1900)
+                    ELSE 00 END) AS EDAD, MAX(CTE_EDA) AS CTE_EDA,                         
+                SUM(CASE WHEN TIP_INF=100 THEN 1 ELSE 0 END) AS LPC,
+                SUM(CASE WHEN TIP_INF=110 THEN 1 ELSE 0 END) AS DILISA,
+                SUM(CASE WHEN TIP_INF=200 THEN 1 ELSE 0 END) AS VISA,
+                SUM(CASE WHEN TIP_INF=210 THEN 1 ELSE 0 END) AS SBB,
+              SUM(PRODUCTO) AS PRODUCTOS, MAX(CTA_NIV_MOR) AS VAL_MAX_NIV_MOR
+        FROM (
+                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 'CC' AS ETQ, C.CTE_CVE_RFC, C.CTE_EDA,  CTA_NIV_MOR--, RNG_PTI_TOT
+                FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                
+
+                LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
+                WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T') AND A.ANIO>=2020
+                AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR A.tip_inf=220
+
+                UNION ALL
+
+                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 
+                      CASE WHEN A.TIP_INF=100 THEN 'LPC'
+                            WHEN A.TIP_INF=110 THEN 'DILISA'
+                            WHEN A.TIP_INF=210 THEN 'DEP'
+                        ELSE 'VISA' END AS ETQ, C.CTE_CVE_RFC,C.CTE_EDA,  CTA_NIV_MOR
+                FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+             
+                LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
+    
+                WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
+                AND A.TIP_INF IN (100,110,200,210)
+                ) AS A
+        LEFT JOIN (  
+                        SELECT CTA_CVE, CTE_CVE_UNICO AS CTE_CVE_UNICO
+                        FROM CTE_UNICO 
+                        WHERE REGISTRO=1
+                    ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+        WHERE A.ETQ<>"CC"
+        GROUP BY 1,2,3--,4
+)
+WHERE ((ANIO*100)+MES) >= 202001
+
+GROUP BY 1,2,3,4,5,6,7
+
+
+--); END;
+
+;
+
+#StandardSQL
+
+CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_UNIC_PTI AS 
+
+/*CREATE OR REPLACE PROCEDURE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.SP_NEGFIN_CTE_UNIC_PTI` ()
+
+
+
+BEGIN
+
+DECLARE FCH_EJEC DATE DEFAULT DATE(DATE_ADD(CURRENT_DATE("America/Mexico_City"), Interval -1 DAY)); 
+
+ IF FCH_EJEC = DATE_TRUNC(FCH_EJEC, MONTH) THEN
+ SET FCH_EJEC = DATE_ADD(FCH_EJEC, INTERVAL -1 DAY);END IF;
+ 
+DELETE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_UNIC_PTI`
+WHERE  ((ANIO*100)+MES) = ((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1);
+
+
+INSERT INTO `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_UNIC_PTI`
+
+(*/
+
+
+WITH CTE_UNICO AS
+(
+    SELECT A.CTA_CVE, A.CTE_CVE_UNICO,
+        row_number() over (partition by A.CTA_CVE order by CTA_CVE) AS REGISTRO
+    FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA_TRJ` AS A
+)
+
+
+
+SELECT 
+COUNT(CTE_UNICO) AS CTE_UNICO,
+ANIO AS ANIO, 
+MES, 
+CASE WHEN MES = 1 THEN 'Ene'
+     WHEN MES = 2 THEN 'Feb'
+     WHEN MES = 3 THEN 'Mar'
+     WHEN MES = 4 THEN 'Abr'
+     WHEN MES = 5 THEN 'May'
+     WHEN MES = 6 THEN 'Jun'
+     WHEN MES = 7 THEN 'Jul'
+     WHEN MES = 8 THEN 'Ago'
+     WHEN MES = 9 THEN 'Sep'
+     WHEN MES = 10 THEN 'Oct'
+     WHEN MES = 11 THEN 'Nov'
+     WHEN MES = 12 THEN 'Dic'
+     ELSE 'OTRO'
+     END AS MES_NAME,
+((W.ANIO*100)+W.MES) AS ANIOMES,
+CASE WHEN RNG_PTI_TOT IS NULL THEN "A. Sin PTI"
+ELSE RNG_PTI_TOT END AS RNG_PTI_TOT,
+CASE    WHEN RNG_PTI_TOT = "A. Sin PTI" THEN 1
+        WHEN RNG_PTI_TOT IS NULL THEN 1
+        WHEN RNG_PTI_TOT = "B. Cero PTI" THEN 2
+        WHEN RNG_PTI_TOT = "C. < 25% PTI" THEN 3
+        WHEN RNG_PTI_TOT = "D. < 50% PTI" THEN 4
+        WHEN RNG_PTI_TOT = "E. < 75% PTI" THEN 5
+        WHEN RNG_PTI_TOT = "F.< 100% PTI" THEN 6
+        WHEN RNG_PTI_TOT = "G. 100+ PTI" THEN 7
+        END AS ID_RNG_PTI
+
+FROM (
+/* CLIENTE ÚNICO */
+
+SELECT CASE WHEN CLIE.PRODUCTOS>4 THEN 5 ELSE PRODUCTOS END AS NUM_PRODUCTOS,
+    CASE WHEN CLIE.PRODUCTOS=1 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 THEN 'Dilisa'
+            WHEN CLIE.PRODUCTOS=1 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Lpc'
+            WHEN CLIE.PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'SBB TD'
+            WHEN CLIE.PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'SBB Visa'
+/* 2 */
+            WHEN CLIE.PRODUCTOS=2 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Dilisa+Lpc'  
+            WHEN CLIE.PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'Dilisa+SBB TD'
+            WHEN CLIE.PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'Dilisa+SBB Visa'
+            WHEN CLIE.PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Lpc+SBB TD'  
+            WHEN CLIE.PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Lpc+SBB Visa'
+            WHEN CLIE.PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'SBB TD+SBB Visa'
+            WHEN CLIE.PRODUCTOS=2 THEN 'Otros'
+/* 3 */
+            WHEN CLIE.PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Dilisa+Lpc+SBB TD'
+            WHEN CLIE.PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Dilisa+Lpc+SBB Visa'
+            WHEN CLIE.PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'Dilisa+SBB TD+SBB Visa'
+            WHEN CLIE.PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Lpc+SBB TD+SBB Visa'
+            WHEN CLIE.PRODUCTOS=3 THEN 'Otros'
+/* 4 */
+            WHEN CLIE.PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Dilisa+Lpc+SBB TD+SBB Visa'
+            WHEN CLIE.PRODUCTOS=4 THEN 'Otros'
+/* Sin cliente unico */
+            WHEN CLIE.PRODUCTOS>4 OR CLIE.PRODUCTOS=0 OR PRODUCTOS IS NULL THEN 'Otros'
+        END AS PRODUCTOS,
+        B.NIV_MOR,
+        CLIE.ANIO,
+        CLIE.MES, 
+        CLIE.CTE_CVE_UNICO AS CTE_UNICO,
+        CASE WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)<=0 THEN 0
+                WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 01 AND 10 
+				AND SUBSTR(C.CTE_CVE_RFC,1,1) NOT IN ('0','1','2','3','4','5','6','7','8','9') 
+				THEN CLIE.ANIO-(SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)+2000)
+                WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 21 AND 99 
+				AND SUBSTR(C.CTE_CVE_RFC,1,1) NOT IN ('0','1','2','3','4','5','6','7','8','9') 
+				THEN CLIE.ANIO-(SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)+1900)
+        ELSE 00 END AS EDAD,
+        C.CTE_GEN,
+        B.CTA_MISC_CR_SCORE, 
+        B.CTA_HIST_PAGOS,
+        B.TIP_INF,
+        (B.CTA_CVE) AS CUENTA,
+        (B.SDO_ACT) AS SDO_ACT,
+        (B.LC_ACT) AS LC_ACT,
+        B.RNG_PTI_TOT
+FROM (
+            SELECT IFNULL(B.CTE_CVE_UNICO,0) AS CTE_CVE_UNICO, D.ANIO, D.MES,                                
+                SUM(CASE WHEN D.TIP_INF=100 THEN 1 ELSE 0 END) AS LPC,
+                SUM(CASE WHEN D.TIP_INF=110 THEN 1 ELSE 0 END) AS DILISA,
+                SUM(CASE WHEN D.TIP_INF=200 THEN 1 ELSE 0 END) AS VISA,
+                SUM(CASE WHEN D.TIP_INF=210 THEN 1 ELSE 0 END) AS SBB,
+                SUM(D.PRODUCTO) AS PRODUCTOS
+            FROM (
+                    SELECT D.CTA_CVE, D.ANIO, D.MES, D.TIP_INF, 1 AS PRODUCTO,
+                            D.CTA_NIV_MOR, D.CTA_SDO_ACT, D.CTA_IMP_LIM_CRD, D.CTA_MISC_CR_SCORE, D.CTA_HIST_PAGOS,
+                             CASE WHEN D.TIP_INF=100 THEN 'LPC'
+                                                    WHEN D.TIP_INF=110 THEN 'DILISA'
+                                                    WHEN D.TIP_INF=210 THEN 'DEP'
+                                                ELSE 'VISA' END AS ETQ
+                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS D
+                        WHERE D.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND D.ANIO>=2021
+                        AND D.TIP_INF IN (110,100,210,200)
+
+                        UNION ALL
+
+                        SELECT E.CTA_CVE, E.ANIO, E.MES, E.TIP_INF, 1 AS PRODUCTO,
+                            E.CTA_NIV_MOR, E.CTA_SDO_ACT, E.CTA_IMP_LIM_CRD, 
+                            E.CTA_MISC_CR_SCORE, E.CTA_HIST_PAGOS, 'CC' AS ETQ
+                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS E
+                        WHERE E.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND E.ANIO>=2021
+                        AND (E.TIP_INF IN (210) AND E.CCR_CVE_BLQ_UNO NOT IN ('K') 
+                        AND E.CCR_CVE_BLQ_DOS IN ('J') OR tip_inf=220) 
+                ) AS D
+            LEFT JOIN (  
+                            SELECT F.CTA_CVE, F.CTE_CVE_UNICO AS CTE_CVE_UNICO
+                            FROM CTE_UNICO AS F 
+                            WHERE REGISTRO=1
+                    ) AS B ON (D.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+            WHERE D.ETQ <> 'CC'
+            GROUP BY 1,2,3
+    ) AS CLIE
+LEFT JOIN (   /* COMPORTAMIENTO */
+        
+                SELECT A.CTA_CVE, IFNULL(B.CTE_CVE_UNICO,0) AS CTE_CVE_UNICO, A.MES, A.ANIO, E.CTA_FCH_ALTA,
+                    A.CTA_NIV_MOR AS NIV_MOR, A.CTA_SDO_ACT AS SDO_ACT, A.CTA_IMP_LIM_CRD AS LC_ACT,
+                    A.CTA_MISC_CR_SCORE, A.CTA_HIST_PAGOS, A.TIP_INF,ING.RNG_PTI_TOT
+                FROM (
+                        SELECT F.CTA_CVE, F.ANIO, F.MES, F.TIP_INF, 1 AS PRODUCTO,
+                            F.CTA_NIV_MOR, F.CTA_SDO_ACT, F.CTA_IMP_LIM_CRD, F.CTA_MISC_CR_SCORE, F.CTA_HIST_PAGOS,
+                             CASE WHEN TIP_INF=100 THEN 'LPC'
+                                                    WHEN TIP_INF=110 THEN 'DILISA'
+                                                    WHEN TIP_INF=210 THEN 'DEP'
+                                                ELSE 'VISA' END AS ETQ, ING.RNG_PTI_TOT
+                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS F
+                        LEFT JOIN (SELECT 
+                          ING.FECHA_SEGUIMIENTO, 
+                          ING.CTA_TRACK,
+                          ING.RNG_PTI_TOT,
+                          EXTRACT(YEAR FROM FECHA_SEGUIMIENTO) AS ANIO,
+                          EXTRACT(MONTH FROM FECHA_SEGUIMIENTO) AS MES
+                          FROM crp-pro-dwh-semanticagold.MUS_PRO_DWH_VIEWS_ODS.VFAC_NEGFIN_ING_INFERIDO AS ING) 
+                          AS ING 
+                          ON F.CTA_CVE = ING.CTA_TRACK AND F.MES = ING.MES AND F.ANIO = ING.ANIO
+                        
+                        WHERE F.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND F.ANIO>=2021
+                        AND F.TIP_INF IN (110,100,210,200)
+
+                        UNION ALL
+
+                        SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO,
+                            A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD, A.CTA_MISC_CR_SCORE, 
+                            A.CTA_HIST_PAGOS, 'CC' AS ETQ,ING.RNG_PTI_TOT
+                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                        LEFT JOIN (SELECT 
+                          ING.FECHA_SEGUIMIENTO, 
+                          ING.CTA_TRACK,ING.RNG_PTI_TOT,
+                          EXTRACT(YEAR FROM FECHA_SEGUIMIENTO) AS ANIO,
+                          EXTRACT(MONTH FROM FECHA_SEGUIMIENTO) AS MES
+                          FROM crp-pro-dwh-semanticagold.MUS_PRO_DWH_VIEWS_ODS.VFAC_NEGFIN_ING_INFERIDO AS ING) 
+                          AS ING 
+                          ON A.CTA_CVE = ING.CTA_TRACK AND A.MES = ING.MES AND A.ANIO = ING.ANIO
+                        WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2021
+                        AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_UNO NOT IN ('K') AND A.CCR_CVE_BLQ_DOS IN ('J') OR tip_inf=220) 
+                    ) AS A
+                LEFT JOIN (  
+                                SELECT G.CTA_CVE, G.CTE_CVE_UNICO
+                                FROM CTE_UNICO AS G
+                                WHERE REGISTRO=1
+                        ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+                LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA` AS E ON (A.CTA_CVE=E.CTA_CVE)
+                LEFT JOIN (SELECT 
+                          ING.FECHA_SEGUIMIENTO, 
+                          ING.CTA_TRACK,ING.RNG_PTI_TOT,
+                          EXTRACT(YEAR FROM FECHA_SEGUIMIENTO) AS ANIO,
+                          EXTRACT(MONTH FROM FECHA_SEGUIMIENTO) AS MES
+                          FROM crp-pro-dwh-semanticagold.MUS_PRO_DWH_VIEWS_ODS.VFAC_NEGFIN_ING_INFERIDO AS ING) 
+                          AS ING 
+                          ON A.CTA_CVE = ING.CTA_TRACK AND A.MES = ING.MES AND A.ANIO = ING.ANIO
+                WHERE A.ETQ <> 'CC'
+
+        ) AS B ON (CLIE.CTE_CVE_UNICO=B.CTE_CVE_UNICO AND CLIE.MES=B.MES AND CLIE.ANIO=B.ANIO)
+INNER JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON (B.CTA_CVE=C.CTA_CVE AND C.SYS_FTE=12)
+) AS W
+WHERE   
+PRODUCTOS IN ('Dilisa+SBB TD', 'Dilisa+SBB Visa', 'Lpc+SBB TD', 'Lpc+SBB Visa', 
+			'Dilisa+Lpc+SBB TD', 'Dilisa+Lpc+SBB Visa', 'Dilisa+SBB TD+SBB Visa', 'Lpc+SBB TD+SBB Visa', 
+            'Dilisa+Lpc+SBB TD+SBB Visa')
+   AND ANIO>= 2021
+   --((ANIO*100)+MES) = ((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1)         
+GROUP BY 2,3,4,5,6,7
+ORDER BY 5
+--);		
+
+;
+
+-- Create or replace view crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_CTE_UNIC_PTI
+--  as
+-- select * from 	crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_UNIC_PTI	
+				
+				
+				
+
+
+#PROCEDURE insumo clientes
+
+CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_TRJ 
+AS 
+
+
+/*CREATE OR REPLACE PROCEDURE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.SP_NEGFIN_CTE_TRJ` ()
+
+
+BEGIN
+
+DECLARE FCH_EJEC DATE DEFAULT DATE(DATE_ADD(CURRENT_DATE("America/Mexico_City"), Interval -1 DAY)); 
+
+ IF FCH_EJEC = DATE_TRUNC(FCH_EJEC, MONTH) THEN
+ SET FCH_EJEC = DATE_ADD(FCH_EJEC, INTERVAL -1 DAY);END IF;
+
+DELETE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_TRJ`
+WHERE ((ANIO*100)+MES) = ((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1);
+
+INSERT INTO `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_TRJ`
+
+(*/
+
+
+
+
+
+
+WITH CTE_UNICO AS
+    (
+        SELECT CTA_CVE, A.CTE_CVE_UNICO,
+            row_number() over (partition by A.CTA_CVE order by A.CTA_CVE) AS REGISTRO
+        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA_TRJ` AS A
+    )
+
+
+SELECT CASE WHEN PRODUCTOS>4 THEN 5 ELSE PRODUCTOS END AS NUM_PRODUCTOS,
+
+       CASE WHEN PRODUCTOS=1 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 THEN 'Dilisa'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Lpc'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'SBB TD'
+            WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'SBB Visa'
+/* 2 */
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Dilisa+Lpc'  
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'Dilisa+SBB TD'
+            WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'Dilisa+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Lpc+SBB TD'  
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Lpc+SBB Visa'
+            WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'SBB TD+SBB Visa'
+            WHEN PRODUCTOS=2 THEN 'Otros'
+/* 3 */
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Dilisa+Lpc+SBB TD'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Dilisa+Lpc+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'Dilisa+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=3 THEN 'Otros'
+/* 4 */
+            WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Dilisa+Lpc+SBB TD+SBB Visa'
+            WHEN PRODUCTOS=4 THEN 'Otros'
+/* Sin cliente unico */
+            WHEN PRODUCTOS>4 OR PRODUCTOS=0 OR PRODUCTOS IS NULL THEN 'Otros'
+        END AS PRODUCTOS,
+        ANIO,
+        MES,
+        ((ANIO*100)+MES) AS ANIOMES,
+        CASE 
+        WHEN (CASE WHEN (EDAD >=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 
+        THEN CTE_EDA ELSE EDAD END) < 30 THEN '1.- <30'
+        WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 
+        THEN CTE_EDA ELSE EDAD END) BETWEEN 30 AND 45 THEN '2.-30 A 45'
+        WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 
+        THEN CTE_EDA ELSE EDAD END) > 45 THEN '3.-45+'
+        ELSE '' END AS RANG_EDAD,
+        COUNT(DISTINCT CTE_CVE_UNICO) AS CLIENTE
+        --,TIP_INF
+FROM (
+        SELECT 
+        DISTINCT B.CTE_CVE_UNICO AS CTE_CVE_UNICO, 
+        ANIO, 
+        MES,
+        MAX(CASE WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)<=0 THEN 0
+        WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 01 AND 10 AND SUBSTR(A.CTE_CVE_RFC,1,1) 
+        NOT IN ('0','1','2','3','4','5','6','7','8','9') 
+        THEN A.ANIO-(SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)+2000)
+        WHEN SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 21 AND 99 AND SUBSTR(A.CTE_CVE_RFC,1,1) 
+        NOT IN ('0','1','2','3','4','5','6','7','8','9') 
+        THEN A.ANIO-(SAFE_CAST( SUBSTR(A.CTE_CVE_RFC,5,2) AS INT64)+1900)
+        ELSE 00 END) AS EDAD, 
+        MAX(CTE_EDA) AS CTE_EDA,                             
+        SUM(CASE WHEN TIP_INF=100 THEN 1 ELSE 0 END) AS LPC,
+        SUM(CASE WHEN TIP_INF=110 THEN 1 ELSE 0 END) AS DILISA,
+        SUM(CASE WHEN TIP_INF=200 THEN 1 ELSE 0 END) AS VISA,
+        SUM(CASE WHEN TIP_INF=210 THEN 1 ELSE 0 END) AS SBB,
+
+        SUM(PRODUCTO) AS PRODUCTOS,
+        --TIP_INF
+        FROM (
+                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 'CC' AS ETQ,
+                 C.CTE_CVE_RFC, C.CTE_EDA
+                FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
+                WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
+                AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf=220
+
+                UNION ALL
+
+                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 
+                      CASE WHEN TIP_INF=100 THEN 'LPC'
+                            WHEN TIP_INF=110 THEN 'DILISA'
+                            WHEN TIP_INF=210 THEN 'DEP'
+                        ELSE 'VISA' END AS ETQ, C.CTE_CVE_RFC,C.CTE_EDA
+                FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
+                WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
+                AND A.TIP_INF IN (100,110,200,210)
+                ) AS A
+        LEFT JOIN (  
+                        SELECT CTA_CVE, CTE_CVE_UNICO AS CTE_CVE_UNICO
+                        FROM CTE_UNICO 
+                        WHERE REGISTRO=1
+                    ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+        WHERE A.ETQ<>"CC"
+        GROUP BY 1,2,3--,11
+)
+WHERE ((ANIO*100)+MES) >= 202101 
+--=((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1)
+GROUP BY 1,2,3,4,5,6--,8
+ORDER BY 3,4
+
+;
+--); END;
+-- --CREAR VISTA
+
+-- Create or replace view crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_CTE_TRJ 
+--  as
+-- select * from 	crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTE_TRJ 
+
+
+
+
+
+#StandardSQL
+
+--CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTA_RNG_EDAD_FLG AS 
+
+/*CREATE OR REPLACE PROCEDURE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.SP_NEGFIN_CTE_UNIC_PTI` ()
+
+
+
+BEGIN
+
+DECLARE FCH_EJEC DATE DEFAULT DATE(DATE_ADD(CURRENT_DATE("America/Mexico_City"), Interval -1 DAY)); 
+
+ IF FCH_EJEC = DATE_TRUNC(FCH_EJEC, MONTH) THEN
+ SET FCH_EJEC = DATE_ADD(FCH_EJEC, INTERVAL -1 DAY);END IF;
+ 
+DELETE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTA_RNG_EDAD_FLG`
+WHERE  ((ANIO*100)+MES) = ((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1);
+
+
+INSERT INTO crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTA_RNG_EDAD_FLG`
+
+(*/
+
+
+CREATE OR REPLACE TABLE `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTA_RNG_EDAD_FLG`
+AS
+
+
+
+WITH CTE_UNICO AS
+(
+    SELECT CTA_CVE, A.CTE_CVE_UNICO,
+        row_number() over (partition by A.CTA_CVE order by A.CTA_CVE) AS REGISTRO
+    FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA_TRJ` AS A
+)
+
+
+
+SELECT NUM_PRODUCTOS,
+       PRODUCTOS,
+       FLG_30,
+       FLG_90,
+       ANIO,
+       MES,
+       CASE WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) < 30 THEN '1.- <30'
+            WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) BETWEEN 30 AND 45 THEN '2.-30 A 45'
+            WHEN (CASE WHEN (EDAD>=100 AND CTE_EDA BETWEEN 17 AND 22) OR EDAD=0 THEN CTE_EDA ELSE EDAD END) > 45 THEN '3.-45+'
+       ELSE '' END AS RANG_EDAD,
+       ANIO_ALTA,
+       
+       CAST(SUM(CUENTA) AS FLOAT64) AS CUENTA,
+       CAST(SUM(SDO_ACT) AS FLOAT64) AS SDO_ACT,
+       CAST(SUM(LC_ACT) AS FLOAT64) AS LC_ACT,
+       ((ANIO*100)+MES) AS ANIOMES,
+     --  VAL_MAX_NIV_MOR
+
+FROM (
+            /* CLIENTE ÚNICO */
+
+            SELECT CASE WHEN PRODUCTOS>4 THEN 5 ELSE PRODUCTOS END AS NUM_PRODUCTOS,
+                   CASE WHEN PRODUCTOS=1 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=0 THEN 'Dilisa'
+                        WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Lpc'
+                        WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'SBB TD'
+                        WHEN PRODUCTOS=1 AND DILISA=0 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'SBB Visa'
+            /* 2 */
+                        WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=0 THEN 'Dilisa+Lpc'  
+                        WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=0 THEN 'Dilisa+SBB TD'
+                        WHEN PRODUCTOS=2 AND DILISA=1 AND LPC=0 AND SBB=0 AND VISA=1 THEN 'Dilisa+SBB Visa' 
+                        WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Lpc+SBB TD'  
+                        WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Lpc+SBB Visa'
+                        WHEN PRODUCTOS=2 AND DILISA=0 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'SBB TD+SBB Visa'
+                        WHEN PRODUCTOS=2 THEN 'Otros'
+            /* 3 */
+                       WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=0 THEN 'Dilisa+Lpc+SBB TD'
+                       WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=1 AND SBB=0 AND VISA=1 THEN 'Dilisa+Lpc+SBB Visa'
+                       WHEN PRODUCTOS=3 AND DILISA=1 AND LPC=0 AND SBB=1 AND VISA=1 THEN 'Dilisa+SBB TD+SBB Visa'
+                       WHEN PRODUCTOS=3 AND DILISA=0 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Lpc+SBB TD+SBB Visa'
+                       WHEN PRODUCTOS=3 THEN 'Otros'
+            /* 4 */
+                        WHEN PRODUCTOS=4 AND DILISA=1 AND LPC=1 AND SBB=1 AND VISA=1 THEN 'Dilisa+Lpc+SBB TD+SBB Visa'
+                        WHEN PRODUCTOS=4 THEN 'Otros'
+            /* Sin cliente unico */
+                        WHEN PRODUCTOS>4 OR PRODUCTOS=0 OR PRODUCTOS IS NULL THEN 'Otros'
+                    END AS PRODUCTOS,
+                    CASE WHEN B.NIV_MOR IN (3,4,5,6,7,8,9)  THEN '30+' ELSE 'Rest' END AS FLG_30,
+                    CASE WHEN B.NIV_MOR IN (5,6,7,8,9) THEN '90+' ELSE 'Rest' END AS FLG_90,
+                   
+
+                    A.ANIO,
+                    A.MES, 
+                    CASE WHEN EXTRACT(YEAR FROM B.CTA_FCH_ALTA)<=2009 THEN 2009 ELSE EXTRACT(YEAR FROM B.CTA_FCH_ALTA) END AS ANIO_ALTA,
+                    -- COUNT(DISTINCT IFNULL(A.CTE_CVE_UNICO,0) ) AS CTE_UNICO,
+                                        CASE WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)<=0 THEN 0
+                         WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 01 AND 10 AND SUBSTR(C.CTE_CVE_RFC,1,1) NOT IN ('0','1','2','3','4','5','6','7','8','9') THEN A.ANIO-(SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)+2000)
+                         WHEN SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64) BETWEEN 21 AND 99 AND SUBSTR(C.CTE_CVE_RFC,1,1) NOT IN ('0','1','2','3','4','5','6','7','8','9') THEN A.ANIO-(SAFE_CAST( SUBSTR(C.CTE_CVE_RFC,5,2) AS INT64)+1900)
+                    ELSE 00 END AS EDAD,
+                    C.CTE_EDA,
+                   -- VAL_MAX_NIV_MOR,
+                    COUNT(B.CTA_CVE) AS CUENTA,
+                    SUM(SDO_ACT) AS SDO_ACT,
+                    SUM(LC_ACT) AS LC_ACT
+            FROM (
+                        SELECT IFNULL(B.CTE_CVE_UNICO,0) AS CTE_CVE_UNICO, ANIO, MES,                             
+                            SUM(CASE WHEN ETQ="LPC" THEN 1 ELSE 0 END) AS LPC,
+                            SUM(CASE WHEN ETQ="DILISA" THEN 1 ELSE 0 END) AS DILISA,
+                            SUM(CASE WHEN ETQ="VISA" THEN 1 ELSE 0 END) AS VISA,
+                            SUM(CASE WHEN ETQ="DEP" THEN 1 ELSE 0 END) AS SBB,
+                            SUM(PRODUCTO) AS PRODUCTOS,
+                            -- MAX(A.CTA_NIV_MOR_1) VAL_MAX_NIV_MOR,  
+                           
+                        FROM (
+                                SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, A.PRODUCTO, A.ETQ, --CTA_NIV_MOR_1
+                                FROM (
+
+                                        SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 'CC' AS ETQ--, CTA_NIV_MOR AS CTA_NIV_MOR_1
+                                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                        WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
+                                        AND ( (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf=220 )
+
+                                        UNION ALL
+
+                                        SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 
+                                              CASE WHEN TIP_INF=100 THEN 'LPC'
+                                                    WHEN TIP_INF=110 THEN 'DILISA'
+                                                    WHEN TIP_INF=210 THEN 'DEP'
+                                                    WHEN TIP_INF=200 THEN 'VISA'
+                                                END AS ETQ--, CTA_NIV_MOR AS CTA_NIV_MOR_1
+                                        FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                        WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
+                                        AND A.TIP_INF IN (100,110,200,210)
+                                    ) AS A
+                                WHERE A.ETQ <>'CC'
+                            ) AS A
+                        LEFT JOIN (  
+                                        SELECT CTA_CVE, CTE_CVE_UNICO AS CTE_CVE_UNICO
+                                        FROM CTE_UNICO 
+                                        WHERE REGISTRO=1
+                                ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+                        GROUP BY 1,2,3
+                ) AS A
+            LEFT JOIN (   /* COMPORTAMIENTO */
+                    
+                            SELECT A.CTA_CVE, IFNULL(B.CTE_CVE_UNICO,0) AS CTE_CVE_UNICO, A.MES, A.ANIO, E.CTA_FCH_ALTA,
+                                A.CTA_NIV_MOR AS NIV_MOR, A.CTA_SDO_ACT AS SDO_ACT, A.CTA_IMP_LIM_CRD AS LC_ACT
+                            FROM (
+                                    SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, A.PRODUCTO,
+                                          A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD
+                                    FROM (
+                                            SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO,
+                                                  A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD, 
+                                                  CASE WHEN TIP_INF=100 THEN 'LPC'
+                                                    WHEN TIP_INF=110 THEN 'DILISA'
+                                                    WHEN TIP_INF=210 THEN 'DEP'
+                                                    WHEN TIP_INF = 220 THEN 'CRED_CONS'
+                                                ELSE 'VISA' END AS ETQ
+                                            FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                            WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND ANIO>=2020
+                                            AND A.TIP_INF IN (110,100,210,200)
+
+                                            UNION ALL
+
+                                            SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO,
+                                                  A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD, 'CC' AS ETQ
+                                            FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
+                                            WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
+                                            AND tip_inf=220 
+                                        ) AS A
+                                    WHERE A.ETQ <>'CC'
+                                ) AS A
+                            LEFT JOIN (  
+                                            SELECT CTA_CVE, CTE_CVE_UNICO
+                                            FROM CTE_UNICO 
+                                            WHERE REGISTRO=1
+                                    ) AS B ON (A.CTA_CVE = B.CTA_CVE) /* CTE_UNICO */
+                            LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CTA` AS E ON (A.CTA_CVE=E.CTA_CVE)
+
+                    ) AS B ON (A.CTE_CVE_UNICO=B.CTE_CVE_UNICO AND A.MES=B.MES AND A.ANIO=B.ANIO)
+            INNER JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON (B.CTA_CVE=C.CTA_CVE AND C.SYS_FTE=12)
+            GROUP BY 1,2,3,4,5,6,7,8,9
+   )
+WHERE ((ANIO*100)+MES) >= 202101
+---((ANIO*100)+MES) >= ((EXTRACT(YEAR FROM CURRENT_DATE('America/Mexico_City')-5)*100)+EXTRACT(MONTH FROM CURRENT_DATE('America/Mexico_City'))-1)
+GROUP BY 1,2,3,4,5,6,7,8
+ORDER BY 1,12
+
+;
+-- ---Vista
+-- CREATE OR REPLACE VIEW crp-pro-cx-semantica.mus_pro_negfin_shared_views.VFAC_NEGFIN_CTA_RNG_EDAD_FLG
+-- AS SELECT *
+-- FROM `crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_CTA_RNG_EDAD_FLG`
+
+
+
+
+				
+				
+				
+				
+				
+				
+				
+
+
+
+
