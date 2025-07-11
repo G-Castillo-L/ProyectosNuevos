@@ -116,7 +116,7 @@ FROM (SELECT
                                         SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 'CC' AS ETQ--, CTA_NIV_MOR AS CTA_NIV_MOR_1
                                         FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
                                         WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2020
-                                        AND TIP_INF IN (220,230) --( (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf=220 )
+                                        AND TIP_INF IN (220,230) --( (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf in ('220','230') )
 
                                         UNION ALL
 
@@ -281,7 +281,7 @@ FROM (
         SUM(CASE WHEN TIP_INF=110 THEN 1 ELSE 0 END) AS DILISA,
         SUM(CASE WHEN TIP_INF=200 THEN 1 ELSE 0 END) AS VISA,
         SUM(CASE WHEN TIP_INF=210 THEN 1 ELSE 0 END) AS SBB,
-        SUM(CASE WHEN TIP_INF=220 THEN 1 ELSE 0 END) AS CC,
+        SUM(CASE WHEN tip_inf in ('220','230') THEN 1 ELSE 0 END) AS CC,
 
 
         SUM(PRODUCTO) AS PRODUCTOS,
@@ -292,7 +292,7 @@ FROM (
                 FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
                 LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
                 WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2020
-                AND  tip_inf=220 --(A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR
+                AND  tip_inf in ('220','230') --(A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR
 
                 UNION ALL
 
@@ -417,7 +417,7 @@ FROM (
 
                 LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
                 WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T') AND A.ANIO>=2020
-                AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR A.tip_inf=220
+                AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR A.tip_inf in ('220','230')
 
                 UNION ALL
 
@@ -588,7 +588,7 @@ FROM (
                         FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS E
                         WHERE E.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND E.ANIO>=2021
                         AND (E.TIP_INF IN (210) AND E.CCR_CVE_BLQ_UNO NOT IN ('K') 
-                        AND E.CCR_CVE_BLQ_DOS IN ('J') OR tip_inf=220) 
+                        AND E.CCR_CVE_BLQ_DOS IN ('J') OR tip_inf in ('220','230')) 
                 ) AS D
             LEFT JOIN (  
                             SELECT F.CTA_CVE, F.CTE_CVE_UNICO AS CTE_CVE_UNICO
@@ -639,7 +639,7 @@ LEFT JOIN (   /* COMPORTAMIENTO */
                           AS ING 
                           ON A.CTA_CVE = ING.CTA_TRACK AND A.MES = ING.MES AND A.ANIO = ING.ANIO
                         WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R','Q') AND A.ANIO>=2021
-                        AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_UNO NOT IN ('K') AND A.CCR_CVE_BLQ_DOS IN ('J') OR tip_inf=220) 
+                        AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_UNO NOT IN ('K') AND A.CCR_CVE_BLQ_DOS IN ('J') OR tip_inf in ('220','230')) 
                     ) AS A
                 LEFT JOIN (  
                                 SELECT G.CTA_CVE, G.CTE_CVE_UNICO
@@ -782,7 +782,7 @@ FROM (
                 FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
                 LEFT JOIN `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VDIM_CLIE_FTES` AS C ON A.CTA_CVE=C.CTA_CVE
                 WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
-                AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf=220
+                AND (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf in ('220','230')
 
                 UNION ALL
 
@@ -938,7 +938,7 @@ FROM (
                                         SELECT A.CTA_CVE, A.ANIO, A.MES, A.TIP_INF, 1 AS PRODUCTO, 'CC' AS ETQ--, CTA_NIV_MOR AS CTA_NIV_MOR_1
                                         FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
                                         WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
-                                        AND ( (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf=220 )
+                                        AND ( (A.TIP_INF IN (210) AND A.CCR_CVE_BLQ_DOS IN ("J")) OR tip_inf in ('220','230') )
 
                                         UNION ALL
 
@@ -986,7 +986,7 @@ FROM (
                                                   A.CTA_NIV_MOR, A.CTA_SDO_ACT, A.CTA_IMP_LIM_CRD, 'CC' AS ETQ
                                             FROM `crp-pro-dwh-semanticagold.EIL_DP_VDWH.VFAC_SDO_CTA_MES` AS A
                                             WHERE A.CTA_EDO_CVE NOT IN ('P','9','8','Z','T','R') AND A.ANIO>=2020
-                                            AND tip_inf=220 
+                                            AND tip_inf in ('220','230') 
                                         ) AS A
                                     WHERE A.ETQ <>'CC'
                                 ) AS A
