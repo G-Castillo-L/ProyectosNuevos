@@ -1,5 +1,6 @@
-CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
-AS 
+--CREATE OR REPLACE TABLE crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
+--AS 
+--INSERT INTO crp-pro-cx-analitica.mus_pro_negfin_tablas_finales.FAC_NEGFIN_MPP_VPBIM2
 
 
 SELECT DISTINCT 
