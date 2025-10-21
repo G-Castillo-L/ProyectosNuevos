@@ -114,34 +114,33 @@ SELECT A.TIP_INF,
 --DATE_DIFF(DATE(ANIO_OBS,MES_OBS,1),CTE_FCH_NAC, YEAR) EDAD,
 
         CASE 
-        WHEN CVE_ZNA ="1" THEN 1.1
-        WHEN CVE_ZNA ="2" THEN 2.1
-        WHEN CVE_ZNA ="3" THEN 3.1
-        WHEN CVE_ZNA ="4" THEN 4.1
-        WHEN CVE_ZNA ="5" THEN 5.1
-        WHEN CVE_ZNA ="6" THEN 6.1
-        WHEN CVE_ZNA ="7" THEN 7.1
-        WHEN CVE_ZNA ="8" THEN 8.1
-        WHEN CVE_ZNA ="9" THEN 9.1
-        WHEN CVE_ZNA ="OTRO" THEN 11.1
-        WHEN CVE_ZNA ="VAD" THEN 10.1
-      --   WHEN CVE_ZNA ="Metro Sur" THEN 1.1
-      --   WHEN CVE_ZNA ="Metro Oriente" THEN 2.1
-      --   WHEN CVE_ZNA ="Metro Norte" THEN 3.1
-      --   WHEN CVE_ZNA ="Metro Centro" THEN 4.1
-      --   WHEN CVE_ZNA ="Bajío" THEN 5.1
-      --   WHEN CVE_ZNA ="Occidente" THEN 6.1
-      --   WHEN CVE_ZNA ="Pacífico" THEN 7.1
-      --   WHEN CVE_ZNA ="Centro Norte" THEN 8.1
-      --   WHEN CVE_ZNA ="Norte" THEN 9.1
-      --   WHEN CVE_ZNA ="Centro Sur" THEN 10.1
-      -- 	WHEN CVE_ZNA ="Golfo" THEN 11.1
-      --   WHEN CVE_ZNA ="Sur" THEN 12.1
-      --   WHEN CVE_ZNA ="VAD" THEN 14.1
-      --   WHEN CVE_ZNA ="Omnicanal" THEN 14.1
-      -- ELSE 13.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="1" THEN 1.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="2" THEN 2.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="3" THEN 3.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="4" THEN 4.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="5" THEN 5.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="6" THEN 6.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="7" THEN 7.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="8" THEN 8.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="9" THEN 9.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="OTRO" THEN 11.1
+        WHEN A.TIP_INF IN (110,100) AND CVE_ZNA ="VAD" THEN 10.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Metro Sur" THEN 1.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Metro Oriente" THEN 2.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Metro Norte" THEN 3.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Metro Centro" THEN 4.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Bajío" THEN 5.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Occidente" THEN 6.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Pacífico" THEN 7.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Centro Norte" THEN 8.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Norte" THEN 9.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Centro Sur" THEN 10.1
+      	WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Golfo" THEN 11.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Sur" THEN 12.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="VAD" THEN 14.1
+        WHEN A.TIP_INF IN (200,210,220,230) AND TDA_ZNA ="Omnicanal" THEN 14.1
+      ELSE 13.1
         END CVE_ZNA,
-
     CTE_GEN,
    CASE 
       WHEN A.CTA_NIV_MOR <5 THEN "0-89 Días"
